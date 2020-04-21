@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
+- update config for chglog
+- Add changelog
 
 
 <a name="1.0.1"></a>
@@ -20,5 +22,5 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/marcincuber/terraform-module-boilerplate/compare/1.0.1...HEAD
-[1.0.1]: https://github.com/marcincuber/terraform-module-boilerplate/compare/1.0.0...1.0.1
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.0.0...1.0.1
