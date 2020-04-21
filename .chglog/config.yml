@@ -2,7 +2,7 @@ style: github
 template: CHANGELOG.tpl.md
 info:
   title: CHANGELOG
-  repository_url: https://github.com/marcincuber/terraform-module-boilerplate
+  repository_url: https://github.com/umotif-public/terraform-aws-rds-aurora
 options:
   header:
     pattern: "^(.*)$"
