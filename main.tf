@@ -138,7 +138,10 @@ resource "aws_rds_cluster" "main" {
     }
   }
 
-  tags = var.tags
+  tags = merge(
+    var.tags,
+    var.cluster_tags
+  )
 
   lifecycle {
     ignore_changes = [master_username, master_password]
@@ -173,7 +176,10 @@ resource "aws_rds_cluster_instance" "main" {
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
   ca_cert_identifier              = var.ca_cert_identifier
 
-  tags = var.tags
+  tags = merge(
+    var.tags,
+    var.cluster_instance_tags
+  )
 }
 
 #####
