@@ -349,3 +349,15 @@ variable "create_monitoring_role" {
   type        = bool
   default     = true
 }
+
+variable "cluster_tags" {
+  description = "Additional tags for the cluster"
+  type        = map(string)
+  default     = {}
+}
+
+variable "cluster_instance_tags" {
+  description = "Additional tags for the cluster instance"
+  type        = map(string)
+  default     = {}
+}

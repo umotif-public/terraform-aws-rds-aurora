@@ -167,7 +167,9 @@ module "aurora" {
   create_security_group = true
 
   tags = {
-    Environment = "test"
+    Environment           = "test",
+    cluster_tags          = "cluster_test",
+    cluster_instance_tags = "cluster_instance"
   }
 }
 

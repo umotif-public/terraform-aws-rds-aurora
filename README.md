@@ -99,6 +99,8 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | backtrack\_window | The target backtrack window, in seconds. Only available for aurora engine currently. To disable backtracking, set this value to 0. Defaults to 0. Must be between 0 and 259200 (72 hours) | `number` | `0` | no |
 | backup\_retention\_period | How long to keep backups for (in days) | `number` | `7` | no |
 | ca\_cert\_identifier | The identifier of the CA certificate for the DB instance. | `string` | `"rds-ca-2019"` | no |
+| cluster\_instance\_tags | Additional tags for the cluster instance | `map(string)` | `{}` | no |
+| cluster\_tags | Additional tags for the cluster | `map(string)` | `{}` | no |
 | copy\_tags\_to\_snapshot | Copy all Cluster tags to snapshots. | `bool` | `false` | no |
 | create\_monitoring\_role | Whether to create the IAM role for RDS enhanced monitoring | `bool` | `true` | no |
 | create\_security\_group | Whether to create security group for RDS cluster | `bool` | `true` | no |
