@@ -169,6 +169,7 @@ module "aurora" {
   cluster_tags = {
     "cluster_tags" = "example cluster main"
   }
+
   cluster_instance_tags = {
     "cluster_instance_tags" = "example of cluster instance tags"
   }
