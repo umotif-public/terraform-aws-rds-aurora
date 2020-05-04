@@ -140,7 +140,8 @@ resource "aws_rds_cluster" "main" {
 
   tags = merge(
     var.tags,
-  var.cluster_tags)
+    var.cluster_tags
+  )
 
   lifecycle {
     ignore_changes = [master_username, master_password]
@@ -177,7 +178,8 @@ resource "aws_rds_cluster_instance" "main" {
 
   tags = merge(
     var.tags,
-  var.cluster_instance_tags)
+    var.cluster_instance_tags
+  )
 }
 
 #####

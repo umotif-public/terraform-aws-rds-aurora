@@ -166,10 +166,15 @@ module "aurora" {
 
   create_security_group = true
 
+  cluster_tags = {
+    "cluster_tags" = "example cluster main"
+  }
+  cluster_instance_tags = {
+    "cluster_instance_tags" = "example of cluster instance tags"
+  }
+
   tags = {
-    Environment           = "test",
-    cluster_tags          = "cluster_test",
-    cluster_instance_tags = "cluster_instance"
+    Environment = "test"
   }
 }
 
