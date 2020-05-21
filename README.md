@@ -10,7 +10,7 @@ Terraform 0.12. Pin module version to `~> v1.0`. Submit pull-requests to `master
 ```hcl
 module "rds-aurora-mysql" {
   source = "umotif-public/rds-aurora/aws"
-  version = "~> 1.0.0"
+  version = "~> 1.2.0"
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"

@@ -14,6 +14,12 @@ resource "aws_security_group" "main" {
       Name = "${var.name_prefix}-sg"
     }
   )
+
+  revoke_rules_on_delete = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "main_egress" {
