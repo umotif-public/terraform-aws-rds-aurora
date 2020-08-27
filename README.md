@@ -14,14 +14,14 @@ module "rds-aurora-mysql" {
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.12"
+  engine_version      = "5.7.mysql_aurora.2.08.1"
   deletion_protection = true
 
   vpc_id  = module.vpc.vpc_id
   subnets = module.vpc.public_subnets
 
   replica_count                       = 2
-  instance_type                       = "db.r5.large"
+  instance_type                       = "db.t3.medium"
   apply_immediately                   = true
   skip_final_snapshot                 = true
 
@@ -30,7 +30,7 @@ module "rds-aurora-mysql" {
 
   iam_database_authentication_enabled = true
 
-  allowed_cidr_blocks             = ["10.10.0.0/24", "20.10.0.0/24"]
+  allowed_cidr_blocks             = ["10.10.0.0/24", "10.20.0.0/24", "10.30.0.0/24"]
 
   create_security_group = true
 

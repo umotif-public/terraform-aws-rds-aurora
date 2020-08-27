@@ -186,6 +186,12 @@ resource "aws_rds_cluster_instance" "main" {
     var.tags,
     var.cluster_instance_tags
   )
+
+  lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
+  }
 }
 
 #####

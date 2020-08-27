@@ -10,7 +10,7 @@ data "aws_region" "current" {}
 #####
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 2.32"
+  version = "~> 2.48"
 
   name = "simple-vpc"
 
@@ -125,7 +125,7 @@ module "aurora" {
   name_prefix         = "example-aurora-mysql"
   database_name       = "databaseName"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.12"
+  engine_version      = "5.7.mysql_aurora.2.08.1"
   deletion_protection = false
 
   vpc_id  = module.vpc.vpc_id
@@ -160,7 +160,7 @@ module "aurora" {
     }
   ]
 
-  allowed_cidr_blocks = ["10.10.0.0/24", "20.10.0.0/24"]
+  allowed_cidr_blocks = ["10.10.0.0/24", "10.20.0.0/24", "10.30.0.0/24"]
 
   monitoring_interval = 60
 
