@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
-- Update module versions to support v3 provider
+- Add licecycle to ignore changes for engine_version
+
+
+<a name="1.2.1"></a>
+## [1.2.1] - 2020-08-05
+
+- Feature/v3 provider support ([#3](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/3))
 
 
 <a name="1.2.0"></a>
@@ -36,7 +42,8 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/1.0.0...1.0.1
