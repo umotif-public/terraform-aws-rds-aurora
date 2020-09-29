@@ -117,14 +117,16 @@ resource "aws_rds_cluster" "main" {
   backup_retention_period      = var.backup_retention_period
   preferred_backup_window      = var.preferred_backup_window
   preferred_maintenance_window = var.preferred_cluster_maintenance_window
-  apply_immediately            = var.apply_immediately
+
+  allow_major_version_upgrade = var.allow_major_version_upgrade
+  apply_immediately           = var.apply_immediately
 
   port                   = var.port == "" ? var.engine == "aurora-postgresql" ? "5432" : "3306" : var.port
   db_subnet_group_name   = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
   vpc_security_group_ids = compact(concat(aws_security_group.main.*.id, var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
 
-  db_cluster_parameter_group_name     = var.db_cluster_parameter_group_name
+  db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   backtrack_window = (var.engine == "aurora-mysql" || var.engine == "aurora") && var.engine_mode != "serverless" ? var.backtrack_window : 0
@@ -170,7 +172,7 @@ resource "aws_rds_cluster_instance" "main" {
   publicly_accessible = var.publicly_accessible
 
   db_subnet_group_name    = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
-  db_parameter_group_name = var.db_parameter_group_name
+  db_parameter_group_name = var.create_parameter_group ? aws_db_parameter_group.main[0].id : var.db_parameter_group_name
 
   preferred_maintenance_window = var.preferred_instance_maintenance_window
   apply_immediately            = var.apply_immediately
@@ -192,6 +194,54 @@ resource "aws_rds_cluster_instance" "main" {
       engine_version
     ]
   }
+}
+
+#####
+# Parameter Groups
+#####
+resource "aws_rds_cluster_parameter_group" "main" {
+  count = var.create_parameter_group ? 1 : 0
+
+  name   = "${var.name_prefix}-aurora-rds-cluster-pg"
+  family = var.engine_parameter_family
+
+  dynamic "parameter" {
+    for_each = var.cluster_parameters
+    content {
+      apply_method = parameter.value.apply_method
+      name         = parameter.value.name
+      value        = parameter.value.value
+    }
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      "Name" = "${var.name_prefix}-aurora-rds-cluster-parameters",
+    }
+  )
+}
+
+resource "aws_db_parameter_group" "main" {
+  count = var.create_parameter_group ? 1 : 0
+
+  name   = "${var.name_prefix}-aurora-rds-pg"
+  family = var.engine_parameter_family
+
+  dynamic "parameter" {
+    for_each = var.parameters
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      "Name" = "${var.name_prefix}-aurora-rds-parameters",
+    }
+  )
 }
 
 #####

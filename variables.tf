@@ -4,6 +4,12 @@ variable "create_security_group" {
   default     = true
 }
 
+variable "create_parameter_group" {
+  type        = bool
+  description = "Whether to create parameter groups for RDS cluster and RDS instances"
+  default     = true
+}
+
 variable "name_prefix" {
   description = "Prefix Name used across all resources"
   type        = string
@@ -120,6 +126,12 @@ variable "auto_minor_version_upgrade" {
   default     = true
 }
 
+variable "allow_major_version_upgrade" {
+  description = "Enable to allow major engine version upgrades when changing engine versions. Defaults to false"
+  type        = bool
+  default     = null
+}
+
 variable "db_parameter_group_name" {
   description = "The name of a DB parameter group to use"
   type        = string
@@ -165,7 +177,12 @@ variable "engine" {
 variable "engine_version" {
   description = "Aurora database engine version."
   type        = string
-  default     = "5.7.12"
+  default     = "5.7.mysql_aurora.2.09.0"
+}
+
+variable "engine_parameter_family" {
+  description = "The database engine paramater group family"
+  default     = "aurora-mysql5.7"
 }
 
 variable "enable_http_endpoint" {
@@ -360,4 +377,23 @@ variable "cluster_instance_tags" {
   description = "Additional tags for the cluster instance"
   type        = map(string)
   default     = {}
+}
+
+variable "parameters" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  description = "A list of parameter objects"
+  default     = []
+}
+
+variable "cluster_parameters" {
+  type = list(object({
+    name         = string
+    value        = string
+    apply_method = string
+  }))
+  description = "A list of cluster parameter objects"
+  default     = []
 }

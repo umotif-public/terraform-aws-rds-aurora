@@ -3,18 +3,18 @@ Terraform module which creates AWS RDS Aurora resources. This module was created
 
 ## Terraform versions
 
-Terraform 0.12. Pin module version to `~> v1.0`. Submit pull-requests to `master` branch.
+Terraform 0.12. Pin module version to `~> v2.0`. Submit pull-requests to `master` branch.
 
 ## Usage
 
 ```hcl
 module "rds-aurora-mysql" {
   source = "umotif-public/rds-aurora/aws"
-  version = "~> 1.2.0"
+  version = "~> 2.0.0"
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.08.1"
+  engine_version      = "5.7.mysql_aurora.2.09.0"
   deletion_protection = true
 
   vpc_id  = module.vpc.vpc_id
@@ -78,20 +78,21 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6, < 0.14 |
-| aws | >= 2.45, < 4.0 |
-| random | >= 2.2 |
+| aws | >= 3.8, < 4.0 |
+| random | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.45, < 4.0 |
-| random | >= 2.2 |
+| aws | >= 3.8, < 4.0 |
+| random | >= 2.3 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| allow\_major\_version\_upgrade | Enable to allow major engine version upgrades when changing engine versions. Defaults to false | `bool` | `null` | no |
 | allowed\_cidr\_blocks | A list of CIDR blocks which are allowed to access the database | `list(string)` | `[]` | no |
 | allowed\_security\_groups | A list of Security Group ID's to allow access to. | `list(string)` | `[]` | no |
 | apply\_immediately | Determines whether or not any DB modifications are applied immediately, or during the maintenance window | `bool` | `false` | no |
@@ -100,9 +101,11 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | backup\_retention\_period | How long to keep backups for (in days) | `number` | `7` | no |
 | ca\_cert\_identifier | The identifier of the CA certificate for the DB instance. | `string` | `"rds-ca-2019"` | no |
 | cluster\_instance\_tags | Additional tags for the cluster instance | `map(string)` | `{}` | no |
+| cluster\_parameters | A list of cluster parameter objects | <pre>list(object({<br>    name         = string<br>    value        = string<br>    apply_method = string<br>  }))</pre> | `[]` | no |
 | cluster\_tags | Additional tags for the cluster | `map(string)` | `{}` | no |
 | copy\_tags\_to\_snapshot | Copy all Cluster tags to snapshots. | `bool` | `false` | no |
 | create\_monitoring\_role | Whether to create the IAM role for RDS enhanced monitoring | `bool` | `true` | no |
+| create\_parameter\_group | Whether to create parameter groups for RDS cluster and RDS instances | `bool` | `true` | no |
 | create\_security\_group | Whether to create security group for RDS cluster | `bool` | `true` | no |
 | database\_name | Name for an automatically created database on cluster creation | `string` | `""` | no |
 | db\_cluster\_parameter\_group\_name | The name of a DB Cluster parameter group to use | `string` | `null` | no |
@@ -113,7 +116,8 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to cloudwatch. See in examples. | `list` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
 | engine\_mode | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
-| engine\_version | Aurora database engine version. | `string` | `"5.7.12"` | no |
+| engine\_parameter\_family | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |
+| engine\_version | Aurora database engine version. | `string` | `"5.7.mysql_aurora.2.09.0"` | no |
 | final\_snapshot\_identifier\_prefix | The prefix name to use when creating a final snapshot on cluster destroy, appends a random 8 digits to name to ensure it's unique too. | `string` | `"final"` | no |
 | global\_cluster\_identifier | The global cluster identifier specified on aws\_rds\_global\_cluster | `string` | `""` | no |
 | iam\_database\_authentication\_enabled | Specifies whether IAM Database authentication should be enabled or not. Not all versions and instances are supported. Refer to the AWS documentation to see which versions are supported. | `bool` | `true` | no |
@@ -124,6 +128,7 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | monitoring\_interval | The interval (seconds) between points when Enhanced Monitoring metrics are collected. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | `number` | `0` | no |
 | monitoring\_role\_arn | IAM role for RDS to send enhanced monitoring metrics to CloudWatch | `string` | `""` | no |
 | name\_prefix | Prefix Name used across all resources | `string` | n/a | yes |
+| parameters | A list of parameter objects | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | password | Master DB password | `string` | `""` | no |
 | performance\_insights\_enabled | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
 | performance\_insights\_kms\_key\_id | The ARN for the KMS key to encrypt Performance Insights data. | `string` | `""` | no |
