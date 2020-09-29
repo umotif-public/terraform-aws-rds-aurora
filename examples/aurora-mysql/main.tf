@@ -125,7 +125,7 @@ module "aurora" {
   name_prefix         = "example-aurora-mysql"
   database_name       = "databaseName"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.08.1"
+  engine_version      = "5.7.mysql_aurora.2.09.0"
   deletion_protection = false
 
   vpc_id  = module.vpc.vpc_id
@@ -133,12 +133,12 @@ module "aurora" {
 
   kms_key_id = module.kms.key_arn
 
-  replica_count                       = 1
-  instance_type                       = "db.t3.medium"
-  apply_immediately                   = true
-  skip_final_snapshot                 = true
-  db_parameter_group_name             = aws_db_parameter_group.aurora_mysql_db_57_parameter_group.id
-  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.aurora_mysql_db_57_cluster_parameter_group.id
+  replica_count               = 1
+  instance_type               = "db.t3.medium"
+  apply_immediately           = true
+  allow_major_version_upgrade = true
+  skip_final_snapshot         = true
+
   iam_database_authentication_enabled = true
 
   enabled_cloudwatch_logs_exports = [
@@ -177,15 +177,5 @@ module "aurora" {
   tags = {
     Environment = "test"
   }
-}
-
-resource "aws_db_parameter_group" "aurora_mysql_db_57_parameter_group" {
-  name   = "test-aurora-mysql-db-57-parameter-group"
-  family = "aurora-mysql5.7"
-}
-
-resource "aws_rds_cluster_parameter_group" "aurora_mysql_db_57_cluster_parameter_group" {
-  name   = "test-aurora-mysql-db-57-cluster-parameter-group"
-  family = "aurora-mysql5.7"
 }
 
