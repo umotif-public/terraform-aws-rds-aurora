@@ -39,8 +39,8 @@ resource "aws_security_group_rule" "main_default_ingress" {
   description = "Ingress allowed from SGs"
 
   type                     = "ingress"
-  from_port                = aws_rds_cluster.main.port
-  to_port                  = aws_rds_cluster.main.port
+  from_port                = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
+  to_port                  = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
   protocol                 = "tcp"
   source_security_group_id = element(var.allowed_security_groups, count.index)
   security_group_id        = join("", aws_security_group.main.*.id)
@@ -52,8 +52,8 @@ resource "aws_security_group_rule" "main_cidr_ingress" {
   description = "Ingress allowed from CIDRs"
 
   type              = "ingress"
-  from_port         = aws_rds_cluster.main.port
-  to_port           = aws_rds_cluster.main.port
+  from_port         = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
+  to_port           = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
   protocol          = "tcp"
   cidr_blocks       = var.allowed_cidr_blocks
   security_group_id = join("", aws_security_group.main.*.id)
@@ -91,7 +91,13 @@ resource "aws_db_subnet_group" "main" {
   )
 }
 
+#####
+# Standard RDS cluster
+#####
+
 resource "aws_rds_cluster" "main" {
+  count = var.enable_global_cluster ? 0 : 1
+
   global_cluster_identifier     = var.global_cluster_identifier
   cluster_identifier            = var.name_prefix
   replication_source_identifier = var.replication_source_identifier
@@ -158,11 +164,83 @@ resource "aws_rds_cluster" "main" {
   depends_on = [aws_cloudwatch_log_group.audit_log_group]
 }
 
+#####
+# RDS cluster which is part of Global cluster
+#####
+resource "aws_rds_cluster" "global" {
+  count = var.enable_global_cluster ? 1 : 0
+
+  global_cluster_identifier     = var.global_cluster_identifier
+  cluster_identifier            = var.name_prefix
+  replication_source_identifier = var.replication_source_identifier
+
+  source_region        = var.source_region
+  engine               = var.engine
+  engine_mode          = var.engine_mode
+  engine_version       = var.engine_version
+  enable_http_endpoint = var.enable_http_endpoint
+
+  kms_key_id = var.kms_key_id
+
+  database_name   = var.database_name
+  master_username = var.username
+  master_password = var.password == "" ? random_password.master_password.result : var.password
+
+  final_snapshot_identifier = "${var.final_snapshot_identifier_prefix}-${var.name_prefix}-${random_id.snapshot_identifier.hex}"
+  skip_final_snapshot       = var.skip_final_snapshot
+  snapshot_identifier       = var.snapshot_identifier
+  copy_tags_to_snapshot     = var.copy_tags_to_snapshot
+
+  deletion_protection          = var.deletion_protection
+  backup_retention_period      = var.backup_retention_period
+  preferred_backup_window      = var.preferred_backup_window
+  preferred_maintenance_window = var.preferred_cluster_maintenance_window
+
+  allow_major_version_upgrade = var.allow_major_version_upgrade
+  apply_immediately           = var.apply_immediately
+
+  port                   = var.port == "" ? var.engine == "aurora-postgresql" ? "5432" : "3306" : var.port
+  db_subnet_group_name   = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
+  vpc_security_group_ids = compact(concat(aws_security_group.main.*.id, var.vpc_security_group_ids))
+  storage_encrypted      = var.storage_encrypted
+
+  db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+
+  backtrack_window = (var.engine == "aurora-mysql" || var.engine == "aurora") && var.engine_mode != "serverless" ? var.backtrack_window : 0
+  iam_roles        = var.iam_roles
+
+  enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
+
+  dynamic "scaling_configuration" {
+    for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]
+
+    content {
+      auto_pause               = lookup(scaling_configuration.value, "auto_pause", null)
+      max_capacity             = lookup(scaling_configuration.value, "max_capacity", null)
+      min_capacity             = lookup(scaling_configuration.value, "min_capacity", null)
+      seconds_until_auto_pause = lookup(scaling_configuration.value, "seconds_until_auto_pause", null)
+      timeout_action           = lookup(scaling_configuration.value, "timeout_action", null)
+    }
+  }
+
+  tags = merge(
+    var.tags,
+    var.cluster_tags
+  )
+
+  lifecycle {
+    ignore_changes = [master_username, master_password, replication_source_identifier]
+  }
+
+  depends_on = [aws_cloudwatch_log_group.audit_log_group]
+}
+
 resource "aws_rds_cluster_instance" "main" {
   count = var.replica_scale_enabled ? var.replica_scale_min : var.replica_count
 
   identifier         = try(var.instances_parameters[count.index].instance_name, "${var.name_prefix}-${count.index + 1}")
-  cluster_identifier = aws_rds_cluster.main.id
+  cluster_identifier = var.enable_global_cluster ? aws_rds_cluster.global[0].id : aws_rds_cluster.main[0].id
 
   engine         = var.engine
   engine_version = var.engine_version
@@ -296,7 +374,7 @@ resource "aws_appautoscaling_target" "read_replica" {
 
   max_capacity       = var.replica_scale_max
   min_capacity       = var.replica_scale_min
-  resource_id        = "cluster:${aws_rds_cluster.main.cluster_identifier}"
+  resource_id        = var.enable_global_cluster ? "cluster:${aws_rds_cluster.global[0].cluster_identifier}" : "cluster:${aws_rds_cluster.main[0].cluster_identifier}"
   scalable_dimension = "rds:cluster:ReadReplicaCount"
   service_namespace  = "rds"
 }
@@ -306,7 +384,7 @@ resource "aws_appautoscaling_policy" "read_replica" {
 
   name               = "target-metric"
   policy_type        = "TargetTrackingScaling"
-  resource_id        = "cluster:${aws_rds_cluster.main.cluster_identifier}"
+  resource_id        = var.enable_global_cluster ? "cluster:${aws_rds_cluster.global[0].cluster_identifier}" : "cluster:${aws_rds_cluster.main[0].cluster_identifier}"
   scalable_dimension = "rds:cluster:ReadReplicaCount"
   service_namespace  = "rds"
 

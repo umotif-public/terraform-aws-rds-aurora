@@ -77,15 +77,15 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6, < 0.14 |
-| aws | >= 3.8, < 4.0 |
+| terraform | >= 0.12.6 |
+| aws | >= 3.8 |
 | random | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.8, < 4.0 |
+| aws | >= 3.8 |
 | random | >= 2.3 |
 
 ## Inputs
@@ -112,6 +112,7 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | db\_parameter\_group\_name | The name of a DB parameter group to use | `string` | `null` | no |
 | db\_subnet\_group\_name | The existing subnet group name to use | `string` | `""` | no |
 | deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
+| enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
 | enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
 | enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to cloudwatch. See in examples. | `list` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |

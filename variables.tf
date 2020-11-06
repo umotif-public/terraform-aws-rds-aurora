@@ -397,3 +397,10 @@ variable "cluster_parameters" {
   description = "A list of cluster parameter objects"
   default     = []
 }
+
+variable "enable_global_cluster" {
+  type        = bool
+  description = "Set this variable to `true` if DB Cluster is going to be part of a Global Cluster."
+  default     = false
+}
+

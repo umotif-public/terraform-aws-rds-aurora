@@ -10,9 +10,9 @@ data "aws_region" "current" {}
 #####
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 2.48"
+  version = "~> 2.63"
 
-  name = "simple-vpc"
+  name = "simple-rds-aurora-vpc"
 
   cidr = "10.0.0.0/16"
 
@@ -23,99 +23,6 @@ module "vpc" {
   enable_nat_gateway = false
 }
 
-#############
-# KMS key
-#############
-module "kms" {
-  source  = "umotif-public/kms/aws"
-  version = "~> 1.0"
-
-  alias_name              = "rds-kms-test-key"
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-  policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Sid" : "Enable IAM User Permissions",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : [
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-              data.aws_caller_identity.current.arn
-            ]
-          },
-          "Action" : "kms:*",
-          "Resource" : "*"
-        },
-        {
-          "Sid" : "Allow use of the key",
-          "Effect" : "Allow",
-          "Principal" : {
-            "Service" : ["rds.amazonaws.com", "monitoring.rds.amazonaws.com"]
-          },
-          "Action" : [
-            "kms:Encrypt",
-            "kms:Decrypt",
-            "kms:ReEncrypt*",
-            "kms:GenerateDataKey*",
-            "kms:DescribeKey"
-          ],
-          "Resource" : "*"
-        }
-      ]
-    }
-  )
-
-  tags = {
-    Environment = "test"
-  }
-}
-
-module "kms-cloudwatch" {
-  source  = "umotif-public/kms/aws"
-  version = "~> 1.0"
-
-  alias_name              = "cloudwatch-kms-test-key"
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-  policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Sid" : "Enable IAM User Permissions",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : [
-              "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-              data.aws_caller_identity.current.arn
-            ]
-          },
-          "Action" : "kms:*",
-          "Resource" : "*"
-        },
-        {
-          "Effect" : "Allow",
-          "Principal" : { "Service" : "logs.${data.aws_region.current.name}.amazonaws.com" },
-          "Action" : [
-            "kms:Encrypt*",
-            "kms:Decrypt*",
-            "kms:ReEncrypt*",
-            "kms:GenerateDataKey*",
-            "kms:Describe*"
-          ],
-          "Resource" : "*"
-        }
-      ]
-    }
-  )
-
-  tags = {
-    Environment = "test"
-  }
-}
 #############
 # RDS Aurora
 #############
