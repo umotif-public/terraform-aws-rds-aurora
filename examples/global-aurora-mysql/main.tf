@@ -18,6 +18,11 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+variable "engine_version" {
+  type    = string
+  default = "5.7.mysql_aurora.2.09.0"
+}
+
 #####
 # VPC and subnets
 #####
@@ -63,7 +68,7 @@ resource "aws_rds_global_cluster" "main" {
   provider = aws.primary
 
   engine                    = "aurora-mysql"
-  engine_version            = "5.7.mysql_aurora.2.08.0"
+  engine_version            = var.engine_version
   global_cluster_identifier = "main-global-mysql-cluster"
   deletion_protection       = false
 
@@ -86,10 +91,12 @@ module "aurora_primary" {
 
   global_cluster_identifier = aws_rds_global_cluster.main.id
 
+  enable_global_cluster = true
+
   name_prefix         = "example-aurora-mysql-ireland"
   engine_mode         = "provisioned"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.08.1"
+  engine_version      = var.engine_version
   deletion_protection = false
 
   storage_encrypted = true
@@ -98,7 +105,7 @@ module "aurora_primary" {
   vpc_id  = module.vpc_ireland.vpc_id
   subnets = module.vpc_ireland.public_subnets
 
-  replica_count               = 1
+  replica_count               = 2
   instance_type               = "db.r5.large"
   apply_immediately           = true
   allow_major_version_upgrade = true
@@ -120,13 +127,15 @@ module "aurora_secondary" {
     aws = aws.secondary
   }
 
+  enable_global_cluster = true
+
   source_region             = "eu-west-1"
   global_cluster_identifier = aws_rds_global_cluster.main.id
 
   name_prefix         = "example-aurora-mysql-london"
   engine_mode         = "provisioned"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.08.1"
+  engine_version      = var.engine_version
   deletion_protection = false
 
   storage_encrypted = true
@@ -138,7 +147,7 @@ module "aurora_secondary" {
   vpc_id  = module.vpc_london.vpc_id
   subnets = module.vpc_london.public_subnets
 
-  replica_count               = 1
+  replica_count               = 2
   instance_type               = "db.r5.large"
   apply_immediately           = true
   allow_major_version_upgrade = true

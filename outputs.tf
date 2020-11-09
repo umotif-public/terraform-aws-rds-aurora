@@ -26,7 +26,7 @@ output "rds_cluster_reader_endpoint" {
 
 output "rds_cluster_master_password" {
   description = "The master password"
-  value       = var.enable_global_cluster ? join("", aws_rds_cluster.global.*.master_password) : join("", aws_rds_cluster.main.*.master_password)
+  value       = var.enable_global_cluster ? aws_rds_cluster.global.*.master_password : aws_rds_cluster.main.*.master_password
   sensitive   = true
 }
 
