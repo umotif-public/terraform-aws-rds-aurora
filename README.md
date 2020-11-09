@@ -67,25 +67,36 @@ Module is to be used with Terraform > 0.12.
 ## Examples
 
 * [Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-mysql)
+* [Global Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/global-aurora-mysql)
 
 ## Authors
 
 Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](https://www.linkedin.com/in/marcincuber/).
+
+## Global Aurora Cluster
+
+Module supports configuration for Global Cluster, see an appropriate example for full configuration.
+
+Please note that there are various limitations from AWS that you need to consider. See the [AWS doc](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html#aurora-global-database.limitations).
+
+On the Terraform side, if you decide to upgrade engine version. You will need to run `terraform apply` twice. This is required since Terraform will only upgrade 2nd cluster during first run. During second run Terraform will upgrade the 1st cluster and automatically update global cluster version to match all clusters.
+
+In order to activate global cluster, set `enable_global_cluster = true` when using this module.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6, < 0.14 |
-| aws | >= 3.8, < 4.0 |
+| terraform | >= 0.12.6 |
+| aws | >= 3.8 |
 | random | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.8, < 4.0 |
+| aws | >= 3.8 |
 | random | >= 2.3 |
 
 ## Inputs
@@ -112,6 +123,7 @@ Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](http
 | db\_parameter\_group\_name | The name of a DB parameter group to use | `string` | `null` | no |
 | db\_subnet\_group\_name | The existing subnet group name to use | `string` | `""` | no |
 | deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
+| enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
 | enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
 | enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to cloudwatch. See in examples. | `list` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
