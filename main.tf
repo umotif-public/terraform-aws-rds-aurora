@@ -357,12 +357,12 @@ resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
 }
 
 resource "aws_cloudwatch_log_group" "audit_log_group" {
-  count = length(var.enabled_cloudwatch_logs_exports) > 0 ? length(var.enabled_cloudwatch_logs_exports) : 0
+  for_each = { for export in var.enabled_cloudwatch_logs_exports : export.name => export }
 
-  name = "/aws/rds/cluster/${var.name_prefix}/${lookup(var.enabled_cloudwatch_logs_exports[count.index], "name")}"
+  name = "/aws/rds/cluster/${var.name_prefix}/${lookup(each.value, "name")}"
 
-  retention_in_days = lookup(var.enabled_cloudwatch_logs_exports[count.index], "retention_in_days", null)
-  kms_key_id        = lookup(var.enabled_cloudwatch_logs_exports[count.index], "kms_key_id", null)
+  retention_in_days = lookup(each.value, "retention_in_days", null)
+  kms_key_id        = lookup(each.value, "kms_key_id", null)
   tags              = var.tags
 }
 
