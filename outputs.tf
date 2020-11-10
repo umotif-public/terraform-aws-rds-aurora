@@ -42,7 +42,7 @@ output "rds_cluster_master_username" {
 
 output "rds_cluster_instance_endpoints" {
   description = "A list of all cluster instance endpoints"
-  value       = join("", aws_rds_cluster_instance.main.*.endpoint)
+  value       = aws_rds_cluster_instance.main.*.endpoint
 }
 
 output "security_group_id" {
