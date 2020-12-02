@@ -1,5 +1,5 @@
 # terraform-aws-rds-aurora
-Terraform module which creates AWS RDS Aurora resources. This module was created to work with Secrets Manager.
+Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Postgres, Serverless and Global clusters.
 
 ## Terraform versions
 
@@ -68,6 +68,8 @@ Module is to be used with Terraform > 0.12.
 
 * [Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-mysql)
 * [Global Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/global-aurora-mysql)
+* [Aurora Serverless](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/serverless)
+* [Aurora Postgres](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-postgres)
 
 ## Authors
 
@@ -89,14 +91,14 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 3.8 |
+| aws | >= 3.15 |
 | random | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.8 |
+| aws | >= 3.15 |
 | random | >= 2.3 |
 
 ## Inputs
@@ -125,7 +127,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
 | enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
 | enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
-| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to cloudwatch. See in examples. | `list` | `[]` | no |
+| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
 | engine\_mode | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
 | engine\_parameter\_family | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |

@@ -105,7 +105,7 @@ resource "aws_rds_cluster" "main" {
   source_region        = var.source_region
   engine               = var.engine
   engine_mode          = var.engine_mode
-  engine_version       = var.engine_version
+  engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
   kms_key_id = var.kms_key_id
@@ -169,7 +169,7 @@ resource "aws_rds_cluster" "main" {
   )
 
   lifecycle {
-    ignore_changes = [master_username, master_password]
+    ignore_changes = [master_username, master_password, snapshot_identifier]
   }
 
   depends_on = [aws_cloudwatch_log_group.audit_log_group]
@@ -188,7 +188,7 @@ resource "aws_rds_cluster" "global" {
   source_region        = var.source_region
   engine               = var.engine
   engine_mode          = var.engine_mode
-  engine_version       = var.engine_version
+  engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
   kms_key_id = var.kms_key_id
@@ -252,7 +252,7 @@ resource "aws_rds_cluster" "global" {
   )
 
   lifecycle {
-    ignore_changes = [master_username, master_password, replication_source_identifier]
+    ignore_changes = [master_username, master_password, replication_source_identifier, snapshot_identifier]
   }
 
   depends_on = [aws_cloudwatch_log_group.audit_log_group]

@@ -2,9 +2,6 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
 #####
 # VPC and subnets
 #####
@@ -32,7 +29,7 @@ module "aurora-postgresql" {
   name_prefix = "example-aurora-postgresql"
 
   engine                  = "aurora-postgresql"
-  engine_version          = "11.7"
+  engine_version          = "11.8"
   engine_parameter_family = "aurora-postgresql11"
 
   apply_immediately           = true
@@ -41,9 +38,17 @@ module "aurora-postgresql" {
 
   iam_database_authentication_enabled = true
 
+  enabled_cloudwatch_logs_exports = [
+    {
+      name = "postgresql"
+    }
+  ]
+
+
   vpc_id  = module.vpc.vpc_id
   subnets = module.vpc.public_subnets
 
+  replica_count = 1
   instance_type = "db.t3.medium"
 
   allowed_cidr_blocks = ["10.10.0.0/24", "10.20.0.0/24", "10.30.0.0/24"]
