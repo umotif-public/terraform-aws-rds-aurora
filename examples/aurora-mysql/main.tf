@@ -10,7 +10,7 @@ data "aws_region" "current" {}
 #####
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 2.63"
+  version = "~> 2.64"
 
   name = "simple-rds-aurora-vpc"
 

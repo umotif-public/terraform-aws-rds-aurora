@@ -258,7 +258,7 @@ variable "iam_database_authentication_enabled" {
 }
 
 variable "enabled_cloudwatch_logs_exports" {
-  description = "List of object which define log types to export to cloudwatch. See in examples."
+  description = "List of object which define log types to export to AWS Cloudwatch. See in examples."
   type        = list
   default     = []
 }
@@ -404,3 +404,8 @@ variable "enable_global_cluster" {
   default     = false
 }
 
+variable "restore_to_point_in_time" {
+  description = "Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference"
+  type        = map(string)
+  default     = {}
+}

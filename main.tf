@@ -105,7 +105,7 @@ resource "aws_rds_cluster" "main" {
   source_region        = var.source_region
   engine               = var.engine
   engine_mode          = var.engine_mode
-  engine_version       = var.engine_version
+  engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
   kms_key_id = var.kms_key_id
@@ -140,6 +140,17 @@ resource "aws_rds_cluster" "main" {
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
 
+  dynamic "restore_to_point_in_time" {
+    for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
+
+    content {
+      source_cluster_identifier  = lookup(restore_to_point_in_time.value, "source_cluster_identifier", null)
+      restore_type               = lookup(restore_to_point_in_time.value, "restore_type", null)
+      use_latest_restorable_time = lookup(restore_to_point_in_time.value, "use_latest_restorable_time", null)
+      restore_to_time            = lookup(restore_to_point_in_time.value, "restore_to_time", null)
+    }
+  }
+
   dynamic "scaling_configuration" {
     for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]
 
@@ -158,7 +169,7 @@ resource "aws_rds_cluster" "main" {
   )
 
   lifecycle {
-    ignore_changes = [master_username, master_password]
+    ignore_changes = [master_username, master_password, snapshot_identifier]
   }
 
   depends_on = [aws_cloudwatch_log_group.audit_log_group]
@@ -177,7 +188,7 @@ resource "aws_rds_cluster" "global" {
   source_region        = var.source_region
   engine               = var.engine
   engine_mode          = var.engine_mode
-  engine_version       = var.engine_version
+  engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
   kms_key_id = var.kms_key_id
@@ -212,6 +223,17 @@ resource "aws_rds_cluster" "global" {
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
 
+  dynamic "restore_to_point_in_time" {
+    for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
+
+    content {
+      source_cluster_identifier  = lookup(restore_to_point_in_time.value, "source_cluster_identifier", null)
+      restore_type               = lookup(restore_to_point_in_time.value, "restore_type", null)
+      use_latest_restorable_time = lookup(restore_to_point_in_time.value, "use_latest_restorable_time", null)
+      restore_to_time            = lookup(restore_to_point_in_time.value, "restore_to_time", null)
+    }
+  }
+
   dynamic "scaling_configuration" {
     for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]
 
@@ -230,7 +252,7 @@ resource "aws_rds_cluster" "global" {
   )
 
   lifecycle {
-    ignore_changes = [master_username, master_password, replication_source_identifier]
+    ignore_changes = [master_username, master_password, replication_source_identifier, snapshot_identifier]
   }
 
   depends_on = [aws_cloudwatch_log_group.audit_log_group]

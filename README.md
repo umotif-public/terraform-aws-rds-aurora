@@ -1,5 +1,5 @@
 # terraform-aws-rds-aurora
-Terraform module which creates AWS RDS Aurora resources. This module was created to work with Secrets Manager.
+Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Postgres, Serverless and Global clusters.
 
 ## Terraform versions
 
@@ -68,6 +68,8 @@ Module is to be used with Terraform > 0.12.
 
 * [Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-mysql)
 * [Global Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/global-aurora-mysql)
+* [Aurora Serverless](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/serverless)
+* [Aurora Postgres](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-postgres)
 
 ## Authors
 
@@ -89,14 +91,14 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 3.8 |
+| aws | >= 3.15 |
 | random | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.8 |
+| aws | >= 3.15 |
 | random | >= 2.3 |
 
 ## Inputs
@@ -125,7 +127,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
 | enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
 | enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
-| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to cloudwatch. See in examples. | `list` | `[]` | no |
+| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
 | engine\_mode | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
 | engine\_parameter\_family | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |
@@ -160,6 +162,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | replica\_scale\_min | Minimum number of replicas to allow scaling for | `number` | `2` | no |
 | replica\_scale\_out\_cooldown | Cooldown in seconds before allowing further scaling operations after a scale out | `number` | `300` | no |
 | replication\_source\_identifier | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. | `string` | `""` | no |
+| restore\_to\_point\_in\_time | Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference | `map(string)` | `{}` | no |
 | scaling\_configuration | Map of nested attributes with scaling properties. Only valid when engine\_mode is set to `serverless` | `map(string)` | `{}` | no |
 | security\_group\_description | The description of the security group. If value is set to empty string it will contain cluster name in the description. | `string` | `""` | no |
 | skip\_final\_snapshot | Should a final snapshot be created on cluster destroy | `bool` | `false` | no |
