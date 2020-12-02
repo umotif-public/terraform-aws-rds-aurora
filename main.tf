@@ -140,6 +140,17 @@ resource "aws_rds_cluster" "main" {
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
 
+  dynamic "restore_to_point_in_time" {
+    for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
+
+    content {
+      source_cluster_identifier  = lookup(restore_to_point_in_time.value, "source_cluster_identifier", null)
+      restore_type               = lookup(restore_to_point_in_time.value, "restore_type", null)
+      use_latest_restorable_time = lookup(restore_to_point_in_time.value, "use_latest_restorable_time", null)
+      restore_to_time            = lookup(restore_to_point_in_time.value, "restore_to_time", null)
+    }
+  }
+
   dynamic "scaling_configuration" {
     for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]
 
@@ -211,6 +222,17 @@ resource "aws_rds_cluster" "global" {
   iam_roles        = var.iam_roles
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
+
+  dynamic "restore_to_point_in_time" {
+    for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
+
+    content {
+      source_cluster_identifier  = lookup(restore_to_point_in_time.value, "source_cluster_identifier", null)
+      restore_type               = lookup(restore_to_point_in_time.value, "restore_type", null)
+      use_latest_restorable_time = lookup(restore_to_point_in_time.value, "use_latest_restorable_time", null)
+      restore_to_time            = lookup(restore_to_point_in_time.value, "restore_to_time", null)
+    }
+  }
 
   dynamic "scaling_configuration" {
     for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]

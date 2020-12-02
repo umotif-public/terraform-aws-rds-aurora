@@ -404,3 +404,8 @@ variable "enable_global_cluster" {
   default     = false
 }
 
+variable "restore_to_point_in_time" {
+  description = "Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference"
+  type        = map(string)
+  default     = {}
+}
