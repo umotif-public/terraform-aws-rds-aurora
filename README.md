@@ -1,3 +1,5 @@
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/umotif-public/terraform-aws-rds-aurora?style=social)
+
 # terraform-aws-rds-aurora
 Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Postgres, Serverless and Global clusters.
 
