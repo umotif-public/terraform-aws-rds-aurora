@@ -259,7 +259,7 @@ variable "iam_database_authentication_enabled" {
 
 variable "enabled_cloudwatch_logs_exports" {
   description = "List of object which define log types to export to AWS Cloudwatch. See in examples."
-  type        = list
+  type        = list(any)
   default     = []
 }
 
@@ -408,4 +408,16 @@ variable "restore_to_point_in_time" {
   description = "Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference"
   type        = map(string)
   default     = {}
+}
+
+variable "aws_partition" {
+  type    = string
+  default = "public"
+
+  description = "A Partition is a group of AWS Region and Service objects. You can use a partition to determine what services are available in a region, or what regions a service is available in."
+
+  validation {
+    condition     = contains(["public", "china"], var.aws_partition)
+    error_message = "Argument \"aws_partition\" must be either \"public\" or \"china\"."
+  }
 }

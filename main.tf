@@ -375,7 +375,7 @@ resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
   count = var.create_monitoring_role && var.monitoring_interval > 0 ? 1 : 0
 
   role       = join("", aws_iam_role.rds_enhanced_monitoring.*.name)
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+  policy_arn = var.aws_partition == "china" ? "arn:aws-cn:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole" : "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
 resource "aws_cloudwatch_log_group" "audit_log_group" {

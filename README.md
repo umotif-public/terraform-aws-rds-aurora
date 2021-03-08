@@ -5,18 +5,18 @@ Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Post
 
 ## Terraform versions
 
-Terraform 0.12. Pin module version to `~> v2.0`. Submit pull-requests to `master` branch.
+Terraform 0.13. Pin module version to `~> v3.0`. Submit pull-requests to `master` branch.
 
 ## Usage
 
 ```hcl
 module "rds-aurora-mysql" {
   source = "umotif-public/rds-aurora/aws"
-  version = "~> 2.0.0"
+  version = "~> 3.0.0"
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.09.0"
+  engine_version      = "5.7.mysql_aurora.2.09.2"
   deletion_protection = true
 
   vpc_id  = module.vpc.vpc_id
@@ -92,7 +92,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6 |
+| terraform | >= 0.13.0 |
 | aws | >= 3.15 |
 | random | >= 2.3 |
 
@@ -112,6 +112,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | allowed\_security\_groups | A list of Security Group ID's to allow access to. | `list(string)` | `[]` | no |
 | apply\_immediately | Determines whether or not any DB modifications are applied immediately, or during the maintenance window | `bool` | `false` | no |
 | auto\_minor\_version\_upgrade | Determines whether minor engine upgrades will be performed automatically in the maintenance window | `bool` | `true` | no |
+| aws\_partition | A Partition is a group of AWS Region and Service objects. You can use a partition to determine what services are available in a region, or what regions a service is available in. | `string` | `"public"` | no |
 | backtrack\_window | The target backtrack window, in seconds. Only available for aurora engine currently. To disable backtracking, set this value to 0. Defaults to 0. Must be between 0 and 259200 (72 hours) | `number` | `0` | no |
 | backup\_retention\_period | How long to keep backups for (in days) | `number` | `7` | no |
 | ca\_cert\_identifier | The identifier of the CA certificate for the DB instance. | `string` | `"rds-ca-2019"` | no |
@@ -129,7 +130,7 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 | deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
 | enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
 | enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
-| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list` | `[]` | no |
+| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list(any)` | `[]` | no |
 | engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
 | engine\_mode | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
 | engine\_parameter\_family | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |
