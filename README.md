@@ -5,14 +5,14 @@ Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Post
 
 ## Terraform versions
 
-Terraform 0.13. Pin module version to `~> v3.0`. Submit pull-requests to `master` branch.
+Terraform 0.13. Pin module version to `~> v3.1`. Submit pull-requests to `master` branch.
 
 ## Usage
 
 ```hcl
 module "rds-aurora-mysql" {
   source = "umotif-public/rds-aurora/aws"
-  version = "~> 3.0.0"
+  version = "~> 3.1.0"
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
@@ -62,10 +62,6 @@ module "rds-aurora-mysql" {
 }
 ```
 
-## Assumptions
-
-Module is to be used with Terraform > 0.12.
-
 ## Examples
 
 * [Aurora MySQL](https://github.com/umotif-public/terraform-aws-rds-aurora/tree/master/examples/aurora-mysql)
@@ -92,107 +88,133 @@ In order to activate global cluster, set `enable_global_cluster = true` when usi
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13.0 |
-| aws | >= 3.15 |
-| random | >= 2.3 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.15 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.15 |
-| random | >= 2.3 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.15 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 2.3 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_appautoscaling_policy.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_policy) | resource |
+| [aws_appautoscaling_target.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_target) | resource |
+| [aws_cloudwatch_log_group.audit_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_db_parameter_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_parameter_group) | resource |
+| [aws_db_subnet_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group) | resource |
+| [aws_iam_role.rds_enhanced_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy_attachment.rds_enhanced_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_rds_cluster.global](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster) | resource |
+| [aws_rds_cluster.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster) | resource |
+| [aws_rds_cluster_instance.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance) | resource |
+| [aws_rds_cluster_parameter_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_parameter_group) | resource |
+| [aws_security_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.main_cidr_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.main_default_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.main_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [random_id.snapshot_identifier](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [random_password.master_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| allow\_major\_version\_upgrade | Enable to allow major engine version upgrades when changing engine versions. Defaults to false | `bool` | `null` | no |
-| allowed\_cidr\_blocks | A list of CIDR blocks which are allowed to access the database | `list(string)` | `[]` | no |
-| allowed\_security\_groups | A list of Security Group ID's to allow access to. | `list(string)` | `[]` | no |
-| apply\_immediately | Determines whether or not any DB modifications are applied immediately, or during the maintenance window | `bool` | `false` | no |
-| auto\_minor\_version\_upgrade | Determines whether minor engine upgrades will be performed automatically in the maintenance window | `bool` | `true` | no |
-| aws\_partition | A Partition is a group of AWS Region and Service objects. You can use a partition to determine what services are available in a region, or what regions a service is available in. | `string` | `"public"` | no |
-| backtrack\_window | The target backtrack window, in seconds. Only available for aurora engine currently. To disable backtracking, set this value to 0. Defaults to 0. Must be between 0 and 259200 (72 hours) | `number` | `0` | no |
-| backup\_retention\_period | How long to keep backups for (in days) | `number` | `7` | no |
-| ca\_cert\_identifier | The identifier of the CA certificate for the DB instance. | `string` | `"rds-ca-2019"` | no |
-| cluster\_instance\_tags | Additional tags for the cluster instance | `map(string)` | `{}` | no |
-| cluster\_parameters | A list of cluster parameter objects | <pre>list(object({<br>    name         = string<br>    value        = string<br>    apply_method = string<br>  }))</pre> | `[]` | no |
-| cluster\_tags | Additional tags for the cluster | `map(string)` | `{}` | no |
-| copy\_tags\_to\_snapshot | Copy all Cluster tags to snapshots. | `bool` | `false` | no |
-| create\_monitoring\_role | Whether to create the IAM role for RDS enhanced monitoring | `bool` | `true` | no |
-| create\_parameter\_group | Whether to create parameter groups for RDS cluster and RDS instances | `bool` | `true` | no |
-| create\_security\_group | Whether to create security group for RDS cluster | `bool` | `true` | no |
-| database\_name | Name for an automatically created database on cluster creation | `string` | `""` | no |
-| db\_cluster\_parameter\_group\_name | The name of a DB Cluster parameter group to use | `string` | `null` | no |
-| db\_parameter\_group\_name | The name of a DB parameter group to use | `string` | `null` | no |
-| db\_subnet\_group\_name | The existing subnet group name to use | `string` | `""` | no |
-| deletion\_protection | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
-| enable\_global\_cluster | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
-| enable\_http\_endpoint | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
-| enabled\_cloudwatch\_logs\_exports | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list(any)` | `[]` | no |
-| engine | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
-| engine\_mode | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
-| engine\_parameter\_family | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |
-| engine\_version | Aurora database engine version. | `string` | `"5.7.mysql_aurora.2.09.0"` | no |
-| final\_snapshot\_identifier\_prefix | The prefix name to use when creating a final snapshot on cluster destroy, appends a random 8 digits to name to ensure it's unique too. | `string` | `"final"` | no |
-| global\_cluster\_identifier | The global cluster identifier specified on aws\_rds\_global\_cluster | `string` | `""` | no |
-| iam\_database\_authentication\_enabled | Specifies whether IAM Database authentication should be enabled or not. Not all versions and instances are supported. Refer to the AWS documentation to see which versions are supported. | `bool` | `true` | no |
-| iam\_roles | A List of ARNs for the IAM roles to associate to the RDS Cluster. | `list(string)` | `[]` | no |
-| instance\_type | Instance type to use | `string` | n/a | yes |
-| instances\_parameters | Individual settings for instances. | `list` | `[]` | no |
-| kms\_key\_id | The ARN for the KMS encryption key if one is set to the cluster. | `string` | `""` | no |
-| monitoring\_interval | The interval (seconds) between points when Enhanced Monitoring metrics are collected. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | `number` | `0` | no |
-| monitoring\_role\_arn | IAM role for RDS to send enhanced monitoring metrics to CloudWatch | `string` | `""` | no |
-| name\_prefix | Prefix Name used across all resources | `string` | n/a | yes |
-| parameters | A list of parameter objects | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
-| password | Master DB password | `string` | `""` | no |
-| performance\_insights\_enabled | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
-| performance\_insights\_kms\_key\_id | The ARN for the KMS key to encrypt Performance Insights data. | `string` | `""` | no |
-| permissions\_boundary | The ARN of the policy that is used to set the permissions boundary for the role. | `string` | `null` | no |
-| port | The port on which to accept connections | `string` | `""` | no |
-| predefined\_metric\_type | The metric type to scale on. Valid values are RDSReaderAverageCPUUtilization and RDSReaderAverageDatabaseConnections. | `string` | `"RDSReaderAverageCPUUtilization"` | no |
-| preferred\_backup\_window | When to perform DB backups | `string` | `"02:00-03:00"` | no |
-| preferred\_cluster\_maintenance\_window | When to perform maintenance on the cluster | `string` | `"sun:05:00-sun:06:00"` | no |
-| preferred\_instance\_maintenance\_window | When to perform maintenance on the instances | `string` | `"sun:05:00-sun:06:00"` | no |
-| publicly\_accessible | Whether the DB should have a public IP address | `bool` | `false` | no |
-| replica\_count | Number of reader nodes to create.  If `replica_scale_enable` is `true`, the value of `replica_scale_min` is used instead. | `number` | `1` | no |
-| replica\_scale\_connections | Average number of connections to trigger autoscaling at. Default value is 70% of db.r4.large's default max\_connections | `number` | `700` | no |
-| replica\_scale\_cpu | CPU usage to trigger autoscaling at | `number` | `70` | no |
-| replica\_scale\_enabled | Whether to enable autoscaling for RDS Aurora (MySQL) read replicas | `bool` | `false` | no |
-| replica\_scale\_in\_cooldown | Cooldown in seconds before allowing further scaling operations after a scale in | `number` | `300` | no |
-| replica\_scale\_max | Maximum number of replicas to allow scaling for | `number` | `0` | no |
-| replica\_scale\_min | Minimum number of replicas to allow scaling for | `number` | `2` | no |
-| replica\_scale\_out\_cooldown | Cooldown in seconds before allowing further scaling operations after a scale out | `number` | `300` | no |
-| replication\_source\_identifier | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. | `string` | `""` | no |
-| restore\_to\_point\_in\_time | Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference | `map(string)` | `{}` | no |
-| scaling\_configuration | Map of nested attributes with scaling properties. Only valid when engine\_mode is set to `serverless` | `map(string)` | `{}` | no |
-| security\_group\_description | The description of the security group. If value is set to empty string it will contain cluster name in the description. | `string` | `""` | no |
-| skip\_final\_snapshot | Should a final snapshot be created on cluster destroy | `bool` | `false` | no |
-| snapshot\_identifier | DB snapshot to create this database from | `string` | `""` | no |
-| source\_region | The source region for an encrypted replica DB cluster. | `string` | `""` | no |
-| storage\_encrypted | Specifies whether the underlying storage layer should be encrypted | `bool` | `true` | no |
-| subnets | List of subnet IDs to use | `list(string)` | `[]` | no |
-| tags | A map of tags to add to all resources. | `map(string)` | `{}` | no |
-| username | Master DB username | `string` | `"root"` | no |
-| vpc\_id | VPC ID | `string` | n/a | yes |
-| vpc\_security\_group\_ids | List of VPC security groups to associate to the cluster in addition to the SG that can be created in this module. | `list(string)` | `[]` | no |
+| <a name="input_allow_major_version_upgrade"></a> [allow\_major\_version\_upgrade](#input\_allow\_major\_version\_upgrade) | Enable to allow major engine version upgrades when changing engine versions. Defaults to false | `bool` | `null` | no |
+| <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | A list of CIDR blocks which are allowed to access the database | `list(string)` | `[]` | no |
+| <a name="input_allowed_security_groups"></a> [allowed\_security\_groups](#input\_allowed\_security\_groups) | A list of Security Group ID's to allow access to. | `list(string)` | `[]` | no |
+| <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Determines whether or not any DB modifications are applied immediately, or during the maintenance window | `bool` | `false` | no |
+| <a name="input_auto_minor_version_upgrade"></a> [auto\_minor\_version\_upgrade](#input\_auto\_minor\_version\_upgrade) | Determines whether minor engine upgrades will be performed automatically in the maintenance window | `bool` | `true` | no |
+| <a name="input_aws_partition"></a> [aws\_partition](#input\_aws\_partition) | [Deprecated] A Partition is a group of AWS Region and Service objects. You can use a partition to determine what services are available in a region, or what regions a service is available in. | `string` | `"public"` | no |
+| <a name="input_backtrack_window"></a> [backtrack\_window](#input\_backtrack\_window) | The target backtrack window, in seconds. Only available for aurora engine currently. To disable backtracking, set this value to 0. Defaults to 0. Must be between 0 and 259200 (72 hours) | `number` | `0` | no |
+| <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | How long to keep backups for (in days) | `number` | `7` | no |
+| <a name="input_ca_cert_identifier"></a> [ca\_cert\_identifier](#input\_ca\_cert\_identifier) | The identifier of the CA certificate for the DB instance. | `string` | `"rds-ca-2019"` | no |
+| <a name="input_cluster_instance_tags"></a> [cluster\_instance\_tags](#input\_cluster\_instance\_tags) | Additional tags for the cluster instance | `map(string)` | `{}` | no |
+| <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | A list of cluster parameter objects | <pre>list(object({<br>    name         = string<br>    value        = string<br>    apply_method = string<br>  }))</pre> | `[]` | no |
+| <a name="input_cluster_tags"></a> [cluster\_tags](#input\_cluster\_tags) | Additional tags for the cluster | `map(string)` | `{}` | no |
+| <a name="input_copy_tags_to_snapshot"></a> [copy\_tags\_to\_snapshot](#input\_copy\_tags\_to\_snapshot) | Copy all Cluster tags to snapshots. | `bool` | `false` | no |
+| <a name="input_create_monitoring_role"></a> [create\_monitoring\_role](#input\_create\_monitoring\_role) | Whether to create the IAM role for RDS enhanced monitoring | `bool` | `true` | no |
+| <a name="input_create_parameter_group"></a> [create\_parameter\_group](#input\_create\_parameter\_group) | Whether to create parameter groups for RDS cluster and RDS instances | `bool` | `true` | no |
+| <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Whether to create security group for RDS cluster | `bool` | `true` | no |
+| <a name="input_database_name"></a> [database\_name](#input\_database\_name) | Name for an automatically created database on cluster creation | `string` | `""` | no |
+| <a name="input_db_cluster_parameter_group_name"></a> [db\_cluster\_parameter\_group\_name](#input\_db\_cluster\_parameter\_group\_name) | The name of a DB Cluster parameter group to use | `string` | `null` | no |
+| <a name="input_db_parameter_group_name"></a> [db\_parameter\_group\_name](#input\_db\_parameter\_group\_name) | The name of a DB parameter group to use | `string` | `null` | no |
+| <a name="input_db_subnet_group_name"></a> [db\_subnet\_group\_name](#input\_db\_subnet\_group\_name) | The existing subnet group name to use | `string` | `""` | no |
+| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | If the DB instance should have deletion protection enabled | `bool` | `false` | no |
+| <a name="input_enable_global_cluster"></a> [enable\_global\_cluster](#input\_enable\_global\_cluster) | Set this variable to `true` if DB Cluster is going to be part of a Global Cluster. | `bool` | `false` | no |
+| <a name="input_enable_http_endpoint"></a> [enable\_http\_endpoint](#input\_enable\_http\_endpoint) | Whether or not to enable the Data API for a serverless Aurora database engine. | `bool` | `false` | no |
+| <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | List of object which define log types to export to AWS Cloudwatch. See in examples. | `list(any)` | `[]` | no |
+| <a name="input_engine"></a> [engine](#input\_engine) | Aurora database engine type, currently aurora, aurora-mysql or aurora-postgresql | `string` | `"aurora"` | no |
+| <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The database engine mode. Valid values: global, parallelquery, provisioned, serverless. | `string` | `"provisioned"` | no |
+| <a name="input_engine_parameter_family"></a> [engine\_parameter\_family](#input\_engine\_parameter\_family) | The database engine paramater group family | `string` | `"aurora-mysql5.7"` | no |
+| <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Aurora database engine version. | `string` | `"5.7.mysql_aurora.2.09.0"` | no |
+| <a name="input_final_snapshot_identifier_prefix"></a> [final\_snapshot\_identifier\_prefix](#input\_final\_snapshot\_identifier\_prefix) | The prefix name to use when creating a final snapshot on cluster destroy, appends a random 8 digits to name to ensure it's unique too. | `string` | `"final"` | no |
+| <a name="input_global_cluster_identifier"></a> [global\_cluster\_identifier](#input\_global\_cluster\_identifier) | The global cluster identifier specified on aws\_rds\_global\_cluster | `string` | `""` | no |
+| <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specifies whether IAM Database authentication should be enabled or not. Not all versions and instances are supported. Refer to the AWS documentation to see which versions are supported. | `bool` | `true` | no |
+| <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A List of ARNs for the IAM roles to associate to the RDS Cluster. | `list(string)` | `[]` | no |
+| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance type to use | `string` | n/a | yes |
+| <a name="input_instances_parameters"></a> [instances\_parameters](#input\_instances\_parameters) | Individual settings for instances. | `list` | `[]` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ARN for the KMS encryption key if one is set to the cluster. | `string` | `""` | no |
+| <a name="input_monitoring_interval"></a> [monitoring\_interval](#input\_monitoring\_interval) | The interval (seconds) between points when Enhanced Monitoring metrics are collected. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | `number` | `0` | no |
+| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | IAM role for RDS to send enhanced monitoring metrics to CloudWatch | `string` | `""` | no |
+| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix Name used across all resources | `string` | n/a | yes |
+| <a name="input_parameters"></a> [parameters](#input\_parameters) | A list of parameter objects | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
+| <a name="input_password"></a> [password](#input\_password) | Master DB password | `string` | `""` | no |
+| <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
+| <a name="input_performance_insights_kms_key_id"></a> [performance\_insights\_kms\_key\_id](#input\_performance\_insights\_kms\_key\_id) | The ARN for the KMS key to encrypt Performance Insights data. | `string` | `""` | no |
+| <a name="input_permissions_boundary"></a> [permissions\_boundary](#input\_permissions\_boundary) | The ARN of the policy that is used to set the permissions boundary for the role. | `string` | `null` | no |
+| <a name="input_port"></a> [port](#input\_port) | The port on which to accept connections | `string` | `""` | no |
+| <a name="input_predefined_metric_type"></a> [predefined\_metric\_type](#input\_predefined\_metric\_type) | The metric type to scale on. Valid values are RDSReaderAverageCPUUtilization and RDSReaderAverageDatabaseConnections. | `string` | `"RDSReaderAverageCPUUtilization"` | no |
+| <a name="input_preferred_backup_window"></a> [preferred\_backup\_window](#input\_preferred\_backup\_window) | When to perform DB backups | `string` | `"02:00-03:00"` | no |
+| <a name="input_preferred_cluster_maintenance_window"></a> [preferred\_cluster\_maintenance\_window](#input\_preferred\_cluster\_maintenance\_window) | When to perform maintenance on the cluster | `string` | `"sun:05:00-sun:06:00"` | no |
+| <a name="input_preferred_instance_maintenance_window"></a> [preferred\_instance\_maintenance\_window](#input\_preferred\_instance\_maintenance\_window) | When to perform maintenance on the instances | `string` | `"sun:05:00-sun:06:00"` | no |
+| <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Whether the DB should have a public IP address | `bool` | `false` | no |
+| <a name="input_replica_count"></a> [replica\_count](#input\_replica\_count) | Number of reader nodes to create.  If `replica_scale_enable` is `true`, the value of `replica_scale_min` is used instead. | `number` | `1` | no |
+| <a name="input_replica_scale_connections"></a> [replica\_scale\_connections](#input\_replica\_scale\_connections) | Average number of connections to trigger autoscaling at. Default value is 70% of db.r4.large's default max\_connections | `number` | `700` | no |
+| <a name="input_replica_scale_cpu"></a> [replica\_scale\_cpu](#input\_replica\_scale\_cpu) | CPU usage to trigger autoscaling at | `number` | `70` | no |
+| <a name="input_replica_scale_enabled"></a> [replica\_scale\_enabled](#input\_replica\_scale\_enabled) | Whether to enable autoscaling for RDS Aurora (MySQL) read replicas | `bool` | `false` | no |
+| <a name="input_replica_scale_in_cooldown"></a> [replica\_scale\_in\_cooldown](#input\_replica\_scale\_in\_cooldown) | Cooldown in seconds before allowing further scaling operations after a scale in | `number` | `300` | no |
+| <a name="input_replica_scale_max"></a> [replica\_scale\_max](#input\_replica\_scale\_max) | Maximum number of replicas to allow scaling for | `number` | `0` | no |
+| <a name="input_replica_scale_min"></a> [replica\_scale\_min](#input\_replica\_scale\_min) | Minimum number of replicas to allow scaling for | `number` | `2` | no |
+| <a name="input_replica_scale_out_cooldown"></a> [replica\_scale\_out\_cooldown](#input\_replica\_scale\_out\_cooldown) | Cooldown in seconds before allowing further scaling operations after a scale out | `number` | `300` | no |
+| <a name="input_replication_source_identifier"></a> [replication\_source\_identifier](#input\_replication\_source\_identifier) | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. | `string` | `""` | no |
+| <a name="input_restore_to_point_in_time"></a> [restore\_to\_point\_in\_time](#input\_restore\_to\_point\_in\_time) | Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference | `map(string)` | `{}` | no |
+| <a name="input_scaling_configuration"></a> [scaling\_configuration](#input\_scaling\_configuration) | Map of nested attributes with scaling properties. Only valid when engine\_mode is set to `serverless` | `map(string)` | `{}` | no |
+| <a name="input_security_group_description"></a> [security\_group\_description](#input\_security\_group\_description) | The description of the security group. If value is set to empty string it will contain cluster name in the description. | `string` | `""` | no |
+| <a name="input_skip_final_snapshot"></a> [skip\_final\_snapshot](#input\_skip\_final\_snapshot) | Should a final snapshot be created on cluster destroy | `bool` | `false` | no |
+| <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | DB snapshot to create this database from | `string` | `""` | no |
+| <a name="input_source_region"></a> [source\_region](#input\_source\_region) | The source region for an encrypted replica DB cluster. | `string` | `""` | no |
+| <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the underlying storage layer should be encrypted | `bool` | `true` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnet IDs to use | `list(string)` | `[]` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | `{}` | no |
+| <a name="input_username"></a> [username](#input\_username) | Master DB username | `string` | `"root"` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
+| <a name="input_vpc_security_group_ids"></a> [vpc\_security\_group\_ids](#input\_vpc\_security\_group\_ids) | List of VPC security groups to associate to the cluster in addition to the SG that can be created in this module. | `list(string)` | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| rds\_cluster\_arn | The ID of the aurora cluster |
-| rds\_cluster\_endpoint | The cluster endpoint |
-| rds\_cluster\_id | The ID of the cluster |
-| rds\_cluster\_instance\_endpoints | A list of all cluster instance endpoints |
-| rds\_cluster\_master\_password | The master password |
-| rds\_cluster\_master\_username | The master username |
-| rds\_cluster\_port | The port |
-| rds\_cluster\_reader\_endpoint | The cluster reader endpoint |
-| rds\_cluster\_resource\_id | The Resource ID of the cluster |
-| security\_group\_id | The security group ID of the cluster |
-
+| <a name="output_rds_cluster_arn"></a> [rds\_cluster\_arn](#output\_rds\_cluster\_arn) | The ID of the aurora cluster |
+| <a name="output_rds_cluster_endpoint"></a> [rds\_cluster\_endpoint](#output\_rds\_cluster\_endpoint) | The cluster endpoint |
+| <a name="output_rds_cluster_id"></a> [rds\_cluster\_id](#output\_rds\_cluster\_id) | The ID of the cluster |
+| <a name="output_rds_cluster_instance_endpoints"></a> [rds\_cluster\_instance\_endpoints](#output\_rds\_cluster\_instance\_endpoints) | A list of all cluster instance endpoints |
+| <a name="output_rds_cluster_master_password"></a> [rds\_cluster\_master\_password](#output\_rds\_cluster\_master\_password) | The master password |
+| <a name="output_rds_cluster_master_username"></a> [rds\_cluster\_master\_username](#output\_rds\_cluster\_master\_username) | The master username |
+| <a name="output_rds_cluster_port"></a> [rds\_cluster\_port](#output\_rds\_cluster\_port) | The port |
+| <a name="output_rds_cluster_reader_endpoint"></a> [rds\_cluster\_reader\_endpoint](#output\_rds\_cluster\_reader\_endpoint) | The cluster reader endpoint |
+| <a name="output_rds_cluster_resource_id"></a> [rds\_cluster\_resource\_id](#output\_rds\_cluster\_resource\_id) | The Resource ID of the cluster |
+| <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | The security group ID of the cluster |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## License
