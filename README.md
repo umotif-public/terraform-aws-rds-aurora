@@ -5,18 +5,18 @@ Terraform module which creates AWS RDS Aurora resources. It supports MySQL, Post
 
 ## Terraform versions
 
-Terraform 0.13. Pin module version to `~> v3.1`. Submit pull-requests to `master` branch.
+Terraform 0.13. Pin module version to `~> v3.2`. Submit pull-requests to `main` branch.
 
 ## Usage
 
 ```hcl
 module "rds-aurora-mysql" {
   source = "umotif-public/rds-aurora/aws"
-  version = "~> 3.1.0"
+  version = "~> 3.2.0"
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.09.2"
+  engine_version      = "5.7.mysql_aurora.2.10.0"
   deletion_protection = true
 
   vpc_id  = module.vpc.vpc_id
@@ -164,14 +164,14 @@ No modules.
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A List of ARNs for the IAM roles to associate to the RDS Cluster. | `list(string)` | `[]` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance type to use | `string` | n/a | yes |
 | <a name="input_instances_parameters"></a> [instances\_parameters](#input\_instances\_parameters) | Individual settings for instances. | `list` | `[]` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ARN for the KMS encryption key if one is set to the cluster. | `string` | `""` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ARN for the KMS encryption key if one is set to the cluster. | `string` | `null` | no |
 | <a name="input_monitoring_interval"></a> [monitoring\_interval](#input\_monitoring\_interval) | The interval (seconds) between points when Enhanced Monitoring metrics are collected. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | `number` | `0` | no |
-| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | IAM role for RDS to send enhanced monitoring metrics to CloudWatch | `string` | `""` | no |
+| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | IAM role for RDS to send enhanced monitoring metrics to CloudWatch | `string` | `null` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix Name used across all resources | `string` | n/a | yes |
 | <a name="input_parameters"></a> [parameters](#input\_parameters) | A list of parameter objects | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | <a name="input_password"></a> [password](#input\_password) | Master DB password | `string` | `""` | no |
 | <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
-| <a name="input_performance_insights_kms_key_id"></a> [performance\_insights\_kms\_key\_id](#input\_performance\_insights\_kms\_key\_id) | The ARN for the KMS key to encrypt Performance Insights data. | `string` | `""` | no |
+| <a name="input_performance_insights_kms_key_id"></a> [performance\_insights\_kms\_key\_id](#input\_performance\_insights\_kms\_key\_id) | The ARN for the KMS key to encrypt Performance Insights data. | `string` | `null` | no |
 | <a name="input_permissions_boundary"></a> [permissions\_boundary](#input\_permissions\_boundary) | The ARN of the policy that is used to set the permissions boundary for the role. | `string` | `null` | no |
 | <a name="input_port"></a> [port](#input\_port) | The port on which to accept connections | `string` | `""` | no |
 | <a name="input_predefined_metric_type"></a> [predefined\_metric\_type](#input\_predefined\_metric\_type) | The metric type to scale on. Valid values are RDSReaderAverageCPUUtilization and RDSReaderAverageDatabaseConnections. | `string` | `"RDSReaderAverageCPUUtilization"` | no |
@@ -187,13 +187,14 @@ No modules.
 | <a name="input_replica_scale_max"></a> [replica\_scale\_max](#input\_replica\_scale\_max) | Maximum number of replicas to allow scaling for | `number` | `0` | no |
 | <a name="input_replica_scale_min"></a> [replica\_scale\_min](#input\_replica\_scale\_min) | Minimum number of replicas to allow scaling for | `number` | `2` | no |
 | <a name="input_replica_scale_out_cooldown"></a> [replica\_scale\_out\_cooldown](#input\_replica\_scale\_out\_cooldown) | Cooldown in seconds before allowing further scaling operations after a scale out | `number` | `300` | no |
-| <a name="input_replication_source_identifier"></a> [replication\_source\_identifier](#input\_replication\_source\_identifier) | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. | `string` | `""` | no |
+| <a name="input_replication_source_identifier"></a> [replication\_source\_identifier](#input\_replication\_source\_identifier) | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. | `any` | `null` | no |
 | <a name="input_restore_to_point_in_time"></a> [restore\_to\_point\_in\_time](#input\_restore\_to\_point\_in\_time) | Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference | `map(string)` | `{}` | no |
+| <a name="input_s3_import"></a> [s3\_import](#input\_s3\_import) | Restore from a Percona XtraBackup stored in S3 bucket. Only Aurora MySQL is supported. | `map(string)` | `null` | no |
 | <a name="input_scaling_configuration"></a> [scaling\_configuration](#input\_scaling\_configuration) | Map of nested attributes with scaling properties. Only valid when engine\_mode is set to `serverless` | `map(string)` | `{}` | no |
 | <a name="input_security_group_description"></a> [security\_group\_description](#input\_security\_group\_description) | The description of the security group. If value is set to empty string it will contain cluster name in the description. | `string` | `""` | no |
 | <a name="input_skip_final_snapshot"></a> [skip\_final\_snapshot](#input\_skip\_final\_snapshot) | Should a final snapshot be created on cluster destroy | `bool` | `false` | no |
-| <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | DB snapshot to create this database from | `string` | `""` | no |
-| <a name="input_source_region"></a> [source\_region](#input\_source\_region) | The source region for an encrypted replica DB cluster. | `string` | `""` | no |
+| <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | DB snapshot to create this database from | `string` | `null` | no |
+| <a name="input_source_region"></a> [source\_region](#input\_source\_region) | The source region for an encrypted replica DB cluster. | `any` | `null` | no |
 | <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the underlying storage layer should be encrypted | `bool` | `true` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnet IDs to use | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. | `map(string)` | `{}` | no |

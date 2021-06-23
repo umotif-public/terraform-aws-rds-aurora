@@ -153,7 +153,7 @@ variable "scaling_configuration" {
 variable "snapshot_identifier" {
   description = "DB snapshot to create this database from"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "storage_encrypted" {
@@ -165,7 +165,7 @@ variable "storage_encrypted" {
 variable "kms_key_id" {
   description = "The ARN for the KMS encryption key if one is set to the cluster."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "engine" {
@@ -248,7 +248,7 @@ variable "performance_insights_enabled" {
 variable "performance_insights_kms_key_id" {
   description = "The ARN for the KMS key to encrypt Performance Insights data."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "iam_database_authentication_enabled" {
@@ -277,12 +277,12 @@ variable "engine_mode" {
 
 variable "replication_source_identifier" {
   description = "ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica."
-  default     = ""
+  default     = null
 }
 
 variable "source_region" {
   description = "The source region for an encrypted replica DB cluster."
-  default     = ""
+  default     = null
 }
 
 variable "vpc_security_group_ids" {
@@ -358,7 +358,7 @@ variable "permissions_boundary" {
 variable "monitoring_role_arn" {
   description = "IAM role for RDS to send enhanced monitoring metrics to CloudWatch"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "create_monitoring_role" {
@@ -420,4 +420,10 @@ variable "aws_partition" {
     condition     = contains(["public", "china"], var.aws_partition)
     error_message = "Argument \"aws_partition\" must be either \"public\" or \"china\"."
   }
+}
+
+variable "s3_import" {
+  description = "Restore from a Percona XtraBackup stored in S3 bucket. Only Aurora MySQL is supported."
+  type        = map(string)
+  default     = null
 }
