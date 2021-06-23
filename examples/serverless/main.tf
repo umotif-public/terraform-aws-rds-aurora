@@ -5,24 +5,17 @@ provider "aws" {
 #####
 # VPC and subnets
 #####
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 2.64"
-
-  name = "simple-vpc-aurora-serverless"
-
-  cidr = "10.0.0.0/16"
-
-  azs            = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-  public_subnets = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-
-  enable_nat_gateway = false
-
-  tags = {
-    Environment = "test"
-  }
+data "aws_vpc" "default" {
+  default = true
 }
 
+data "aws_subnet_ids" "all" {
+  vpc_id = data.aws_vpc.default.id
+}
+
+#############
+# RDS Aurora
+#############
 module "aurora-serverless" {
   source = "../../"
 
@@ -34,8 +27,8 @@ module "aurora-serverless" {
 
   replica_count = 0
 
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.public_subnets
+  vpc_id  = data.aws_vpc.default.id
+  subnets = data.aws_subnet_ids.all.ids
 
   instance_type       = "db.t3.medium"
   apply_immediately   = true

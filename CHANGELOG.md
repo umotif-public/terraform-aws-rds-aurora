@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+
+<a name="3.1.0"></a>
+## [3.1.0] - 2021-06-04
+
+- Update aws partition sourcing and add IAM role tags ([#12](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/12))
+
+
+<a name="3.0.0"></a>
+## [3.0.0] - 2021-03-08
+
+- Add support for China partition ([#11](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/11))
 - Update README.md
 
 
@@ -84,7 +96,9 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.2.0...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.0.0...3.1.0
+[3.0.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.2.0...3.0.0
 [2.2.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.1.2...2.2.0
 [2.1.2]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.1.0...2.1.1

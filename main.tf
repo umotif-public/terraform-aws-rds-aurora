@@ -94,7 +94,6 @@ resource "aws_db_subnet_group" "main" {
 #####
 # Standard RDS cluster
 #####
-
 resource "aws_rds_cluster" "main" {
   count = var.enable_global_cluster ? 0 : 1
 
@@ -139,6 +138,17 @@ resource "aws_rds_cluster" "main" {
   iam_roles        = var.iam_roles
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
+
+  dynamic "s3_import" {
+    for_each = var.s3_import != null ? [var.s3_import] : []
+    content {
+      source_engine         = "mysql"
+      source_engine_version = s3_import.value.source_engine_version
+      bucket_name           = s3_import.value.bucket_name
+      bucket_prefix         = lookup(s3_import.value, "bucket_prefix", null)
+      ingestion_role        = s3_import.value.ingestion_role
+    }
+  }
 
   dynamic "restore_to_point_in_time" {
     for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
@@ -222,6 +232,17 @@ resource "aws_rds_cluster" "global" {
   iam_roles        = var.iam_roles
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
+
+  dynamic "s3_import" {
+    for_each = var.s3_import != null ? [var.s3_import] : []
+    content {
+      source_engine         = "mysql"
+      source_engine_version = s3_import.value.source_engine_version
+      bucket_name           = s3_import.value.bucket_name
+      bucket_prefix         = lookup(s3_import.value, "bucket_prefix", null)
+      ingestion_role        = s3_import.value.ingestion_role
+    }
+  }
 
   dynamic "restore_to_point_in_time" {
     for_each = length(keys(var.restore_to_point_in_time)) == 0 ? [] : [var.restore_to_point_in_time]
