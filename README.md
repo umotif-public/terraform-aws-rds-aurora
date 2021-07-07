@@ -209,6 +209,7 @@ No modules.
 | <a name="output_rds_cluster_arn"></a> [rds\_cluster\_arn](#output\_rds\_cluster\_arn) | The ID of the aurora cluster |
 | <a name="output_rds_cluster_endpoint"></a> [rds\_cluster\_endpoint](#output\_rds\_cluster\_endpoint) | The cluster endpoint |
 | <a name="output_rds_cluster_id"></a> [rds\_cluster\_id](#output\_rds\_cluster\_id) | The ID of the cluster |
+| <a name="output_rds_cluster_instance_arns"></a> [rds\_cluster\_instance\_arns](#output\_rds\_cluster\_instance\_arns) | A list of all cluster instance ARNs |
 | <a name="output_rds_cluster_instance_dbi_resource_ids"></a> [rds\_cluster\_instance\_dbi\_resource\_ids](#output\_rds\_cluster\_instance\_dbi\_resource\_ids) | A list of all the region-unique, immutable identifiers for the DB instances |
 | <a name="output_rds_cluster_instance_endpoints"></a> [rds\_cluster\_instance\_endpoints](#output\_rds\_cluster\_instance\_endpoints) | A list of all cluster instance endpoints |
 | <a name="output_rds_cluster_instance_ids"></a> [rds\_cluster\_instance\_ids](#output\_rds\_cluster\_instance\_ids) | A list of all cluster instance ids |

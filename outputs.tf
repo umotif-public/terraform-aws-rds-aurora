@@ -50,6 +50,11 @@ output "rds_cluster_instance_endpoints" {
   value       = aws_rds_cluster_instance.main.*.endpoint
 }
 
+output "rds_cluster_instance_arns" {
+  description = "A list of all cluster instance ARNs"
+  value       = aws_rds_cluster_instance.main.*.arn
+}
+
 output "rds_cluster_instance_ids" {
   description = "A list of all cluster instance ids"
   value       = aws_rds_cluster_instance.main.*.id
