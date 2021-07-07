@@ -1,4 +1,6 @@
-// aws_rds_cluster
+#####
+# aws_rds_cluster
+#####
 output "rds_cluster_arn" {
   description = "The ID of the aurora cluster"
   value       = var.enable_global_cluster ? join("", aws_rds_cluster.global.*.arn) : join("", aws_rds_cluster.main.*.arn)
@@ -40,9 +42,22 @@ output "rds_cluster_master_username" {
   value       = var.enable_global_cluster ? join("", aws_rds_cluster.global.*.master_username) : join("", aws_rds_cluster.main.*.master_username)
 }
 
+#####
+# aws_rds_cluster_instance
+#####
 output "rds_cluster_instance_endpoints" {
   description = "A list of all cluster instance endpoints"
   value       = aws_rds_cluster_instance.main.*.endpoint
+}
+
+output "rds_cluster_instance_ids" {
+  description = "A list of all cluster instance ids"
+  value       = aws_rds_cluster_instance.main.*.id
+}
+
+output "rds_cluster_instance_dbi_resource_ids" {
+  description = "A list of all the region-unique, immutable identifiers for the DB instances"
+  value       = aws_rds_cluster_instance.main.*.dbi_resource_id
 }
 
 output "security_group_id" {
