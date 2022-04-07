@@ -427,3 +427,29 @@ variable "s3_import" {
   type        = map(string)
   default     = null
 }
+
+variable "assume_role" {
+  type    = string
+  default = "arn:aws:iam::414892725800:role/blu-jenkins-role" 
+}
+
+variable "private_record" {
+  type        = bool
+  description = "Set this variable to `true` if create record in Route53"
+  default     = true
+}
+
+variable "private_record_read_instance" {
+  type        = bool
+  description = "Set this variable to `true` if create record in Route53 for read instance"
+  default     = false
+}
+
+variable "private_record_domain" {
+  description = "Domain for record"
+  default     = "blu.com.br"
+}
+
+variable "environment" {
+  description = "Environment for private record"
+}
