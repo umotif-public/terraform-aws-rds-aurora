@@ -16,14 +16,14 @@ module "rds-aurora-mysql" {
 
   name_prefix         = "example-aurora-mysql"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.10.0"
+  engine_version      = "8.0.mysql_aurora.3.03.1"
   deletion_protection = true
 
   vpc_id  = module.vpc.vpc_id
   subnets = module.vpc.public_subnets
 
   replica_count                       = 2
-  instance_type                       = "db.t3.medium"
+  instance_type                       = "db.t4g.medium"
   apply_immediately                   = true
   skip_final_snapshot                 = true
 
@@ -71,7 +71,7 @@ module "rds-aurora-mysql" {
 
 ## Authors
 
-Module managed by [Marcin Cuber](https://github.com/marcincuber) [LinkedIn](https://www.linkedin.com/in/marcincuber/).
+ Module managed by [uMotif](https://github.com/umotif-public/).
 
 ## Global Aurora Cluster
 

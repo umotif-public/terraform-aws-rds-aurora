@@ -23,14 +23,13 @@ module "aurora-serverless" {
 
   engine                  = "aurora"
   engine_mode             = "serverless"
-  engine_parameter_family = "aurora5.6"
 
   replica_count = 0
 
   vpc_id  = data.aws_vpc.default.id
   subnets = data.aws_subnet_ids.all.ids
 
-  instance_type       = "db.t3.medium"
+  instance_type       = "db.t4g.medium"
   apply_immediately   = true
   skip_final_snapshot = true
   storage_encrypted   = true
