@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
+- Upgrade to 5.x compatibility + update examples/variables
+
+
+<a name="3.2.1"></a>
+## [3.2.1] - 2021-07-07
+
+- Add more cluster instance outputs ([#15](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/15))
+
+
+<a name="3.2.0"></a>
+## [3.2.0] - 2021-06-23
+
+- Add s3_import option ([#14](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/14))
 
 
 <a name="3.1.0"></a>
@@ -96,7 +109,9 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.1...HEAD
+[3.2.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.0...3.2.1
+[3.2.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.1.0...3.2.0
 [3.1.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.2.0...3.0.0
 [2.2.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/2.1.2...2.2.0

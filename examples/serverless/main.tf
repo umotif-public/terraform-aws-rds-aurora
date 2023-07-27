@@ -21,8 +21,8 @@ module "aurora-serverless" {
 
   name_prefix = "example-aurora-serverless"
 
-  engine                  = "aurora"
-  engine_mode             = "serverless"
+  engine      = "aurora"
+  engine_mode = "serverless"
 
   replica_count = 0
 

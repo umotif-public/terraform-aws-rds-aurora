@@ -30,7 +30,7 @@ resource "aws_security_group_rule" "main_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = join("", aws_security_group.main.*.id)
+  security_group_id = aws_security_group.main[0].id
 }
 
 resource "aws_security_group_rule" "main_default_ingress" {
@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "main_default_ingress" {
   to_port                  = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
   protocol                 = "tcp"
   source_security_group_id = element(var.allowed_security_groups, count.index)
-  security_group_id        = join("", aws_security_group.main.*.id)
+  security_group_id        = aws_security_group.main[0].id
 }
 
 resource "aws_security_group_rule" "main_cidr_ingress" {
@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "main_cidr_ingress" {
   to_port           = var.enable_global_cluster ? aws_rds_cluster.global[0].port : aws_rds_cluster.main[0].port
   protocol          = "tcp"
   cidr_blocks       = var.allowed_cidr_blocks
-  security_group_id = join("", aws_security_group.main.*.id)
+  security_group_id = aws_security_group.main[0].id
 }
 
 #####
@@ -127,8 +127,8 @@ resource "aws_rds_cluster" "main" {
   apply_immediately           = var.apply_immediately
 
   port                   = var.port == "" ? var.engine == "aurora-postgresql" ? "5432" : "3306" : var.port
-  db_subnet_group_name   = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
-  vpc_security_group_ids = compact(concat(aws_security_group.main.*.id, var.vpc_security_group_ids))
+  db_subnet_group_name   = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
+  vpc_security_group_ids = compact(concat(aws_security_group.main[0].id, var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
 
   db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
@@ -221,8 +221,8 @@ resource "aws_rds_cluster" "global" {
   apply_immediately           = var.apply_immediately
 
   port                   = var.port == "" ? var.engine == "aurora-postgresql" ? "5432" : "3306" : var.port
-  db_subnet_group_name   = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
-  vpc_security_group_ids = compact(concat(aws_security_group.main.*.id, var.vpc_security_group_ids))
+  db_subnet_group_name   = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
+  vpc_security_group_ids = compact(concat(aws_security_group.main[0].id, var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
 
   db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
@@ -292,13 +292,13 @@ resource "aws_rds_cluster_instance" "main" {
 
   publicly_accessible = var.publicly_accessible
 
-  db_subnet_group_name    = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.main.*.name) : var.db_subnet_group_name
+  db_subnet_group_name    = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
   db_parameter_group_name = var.create_parameter_group ? aws_db_parameter_group.main[0].id : var.db_parameter_group_name
 
   preferred_maintenance_window = var.preferred_instance_maintenance_window
   apply_immediately            = var.apply_immediately
 
-  monitoring_role_arn             = var.create_monitoring_role ? join("", aws_iam_role.rds_enhanced_monitoring.*.arn) : var.monitoring_role_arn
+  monitoring_role_arn             = var.create_monitoring_role ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
   monitoring_interval             = var.monitoring_interval
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   performance_insights_enabled    = var.performance_insights_enabled
@@ -397,7 +397,7 @@ EOF
 resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
   count = var.create_monitoring_role && var.monitoring_interval > 0 ? 1 : 0
 
-  role       = join("", aws_iam_role.rds_enhanced_monitoring.*.name)
+  role       = aws_iam_role.rds_enhanced_monitoring[0].name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
