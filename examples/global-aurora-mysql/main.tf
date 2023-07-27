@@ -1,22 +1,5 @@
-provider "aws" {
-  region  = "eu-west-1"
-  version = ">= 3.14"
-}
-
-provider "aws" {
-  alias   = "primary"
-  region  = "eu-west-1"
-  version = ">= 3.14"
-}
-
-provider "aws" {
-  alias   = "secondary"
-  region  = "eu-west-2"
-  version = ">= 3.14"
-}
 
 data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
 
 variable "engine_version" {
   type    = string

@@ -1,10 +1,3 @@
-provider "aws" {
-  region = "eu-west-1"
-}
-
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
 #####
 # VPC and subnets
 #####
@@ -12,8 +5,11 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnet_ids" "all" {
-  vpc_id = data.aws_vpc.default.id
+data "aws_subnets" "all" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
 }
 
 #############
@@ -25,16 +21,15 @@ module "aurora" {
   name_prefix         = "example-aurora-mysql"
   database_name       = "databaseName"
   engine              = "aurora-mysql"
-  engine_version      = "5.7.mysql_aurora.2.09.0"
   deletion_protection = false
 
   vpc_id  = data.aws_vpc.default.id
-  subnets = data.aws_subnet_ids.all.ids
+  subnets = data.aws_subnets.all.ids
 
   kms_key_id = module.kms.key_arn
 
   replica_count               = 1
-  instance_type               = "db.t3.medium"
+  instance_type               = "db.t4g.medium"
   apply_immediately           = true
   allow_major_version_upgrade = true
   skip_final_snapshot         = true

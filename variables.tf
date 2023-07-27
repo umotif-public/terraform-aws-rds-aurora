@@ -24,6 +24,7 @@ variable "subnets" {
 variable "replica_count" {
   description = "Number of reader nodes to create.  If `replica_scale_enable` is `true`, the value of `replica_scale_min` is used instead."
   default     = 1
+  type        = number
 }
 
 variable "allowed_security_groups" {
@@ -177,12 +178,13 @@ variable "engine" {
 variable "engine_version" {
   description = "Aurora database engine version."
   type        = string
-  default     = "5.7.mysql_aurora.2.09.0"
+  default     = "8.0.mysql_aurora.3.03.1"
 }
 
 variable "engine_parameter_family" {
   description = "The database engine paramater group family"
-  default     = "aurora-mysql5.7"
+  default     = "aurora-mysql8.0"
+  type        = string
 }
 
 variable "enable_http_endpoint" {
@@ -278,11 +280,13 @@ variable "engine_mode" {
 variable "replication_source_identifier" {
   description = "ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica."
   default     = null
+  type        = string
 }
 
 variable "source_region" {
   description = "The source region for an encrypted replica DB cluster."
   default     = null
+  type        = string
 }
 
 variable "vpc_security_group_ids" {
@@ -300,6 +304,7 @@ variable "db_subnet_group_name" {
 variable "predefined_metric_type" {
   description = "The metric type to scale on. Valid values are RDSReaderAverageCPUUtilization and RDSReaderAverageDatabaseConnections."
   default     = "RDSReaderAverageCPUUtilization"
+  type        = string
 }
 
 variable "backtrack_window" {
@@ -335,6 +340,7 @@ variable "ca_cert_identifier" {
 variable "instances_parameters" {
   description = "Individual settings for instances."
   default     = []
+  type        = list(string)
 }
 
 variable "preferred_cluster_maintenance_window" {
@@ -408,18 +414,6 @@ variable "restore_to_point_in_time" {
   description = "Restore to point in time configuration. See docs for arguments https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference"
   type        = map(string)
   default     = {}
-}
-
-variable "aws_partition" {
-  type    = string
-  default = "public"
-
-  description = "[Deprecated] A Partition is a group of AWS Region and Service objects. You can use a partition to determine what services are available in a region, or what regions a service is available in."
-
-  validation {
-    condition     = contains(["public", "china"], var.aws_partition)
-    error_message = "Argument \"aws_partition\" must be either \"public\" or \"china\"."
-  }
 }
 
 variable "s3_import" {

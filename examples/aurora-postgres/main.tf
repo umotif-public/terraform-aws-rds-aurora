@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-1"
-}
-
 #####
 # VPC and subnets
 #####
@@ -9,8 +5,11 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnet_ids" "all" {
-  vpc_id = data.aws_vpc.default.id
+data "aws_subnets" "all" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
 }
 
 #############
@@ -22,8 +21,8 @@ module "aurora-postgresql" {
   name_prefix = "example-aurora-postgresql"
 
   engine                  = "aurora-postgresql"
-  engine_version          = "11.8"
-  engine_parameter_family = "aurora-postgresql11"
+  engine_version          = "15.3"
+  engine_parameter_family = "aurora-postgresql15"
 
   apply_immediately           = true
   allow_major_version_upgrade = true
@@ -38,10 +37,10 @@ module "aurora-postgresql" {
   ]
 
   vpc_id  = data.aws_vpc.default.id
-  subnets = data.aws_subnet_ids.all.ids
+  subnets = data.aws_subnets.all.ids
 
   replica_count = 1
-  instance_type = "db.t3.medium"
+  instance_type = "db.t4g.medium"
 
   allowed_cidr_blocks = ["10.10.0.0/24", "10.20.0.0/24", "10.30.0.0/24"]
 

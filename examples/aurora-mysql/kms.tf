@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "cloudwatch" {
 #############
 module "kms" {
   source  = "umotif-public/kms/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   alias_name              = "rds-kms-test-key"
   deletion_window_in_days = 7
@@ -96,7 +96,7 @@ module "kms" {
 
 module "kms-cloudwatch" {
   source  = "umotif-public/kms/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   alias_name              = "cloudwatch-kms-test-key"
   deletion_window_in_days = 7
