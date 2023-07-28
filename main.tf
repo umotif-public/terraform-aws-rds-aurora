@@ -128,7 +128,7 @@ resource "aws_rds_cluster" "main" {
 
   port                   = var.port == "" ? var.engine == "aurora-postgresql" ? "5432" : "3306" : var.port
   db_subnet_group_name   = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
-  vpc_security_group_ids = compact(concat(aws_security_group.main[0].id, var.vpc_security_group_ids))
+  vpc_security_group_ids = compact(concat([aws_security_group.main[0].id], var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
 
   db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
@@ -298,7 +298,7 @@ resource "aws_rds_cluster_instance" "main" {
   preferred_maintenance_window = var.preferred_instance_maintenance_window
   apply_immediately            = var.apply_immediately
 
-  monitoring_role_arn             = var.create_monitoring_role ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
+  monitoring_role_arn             = var.create_monitoring_role && var.monitoring_interval > 0 ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
   monitoring_interval             = var.monitoring_interval
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   performance_insights_enabled    = var.performance_insights_enabled

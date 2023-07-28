@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
-- Upgrade to 5.x compatibility + update examples/variables
+- fix: assignment compatiblity issues
+
+
+<a name="3.3.0"></a>
+## [3.3.0] - 2023-07-27
+
+- Upgrade to 5.x compatibility + update examples/variables ([#17](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/17))
 
 
 <a name="3.2.1"></a>
@@ -109,7 +115,8 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.1...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.0...HEAD
+[3.3.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.1...3.3.0
 [3.2.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.0...3.2.1
 [3.2.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.1.0...3.2.0
 [3.1.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.0.0...3.1.0
