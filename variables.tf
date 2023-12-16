@@ -61,13 +61,13 @@ variable "database_name" {
   default     = ""
 }
 
-variable "username" {
+variable "master_username" {
   description = "Master DB username"
   type        = string
   default     = "root"
 }
 
-variable "password" {
+variable "master_password" {
   description = "Master DB password"
   type        = string
   default     = ""
@@ -202,13 +202,13 @@ variable "replica_scale_enabled" {
 variable "replica_scale_max" {
   description = "Maximum number of replicas to allow scaling for"
   type        = number
-  default     = 0
+  default     = 2
 }
 
 variable "replica_scale_min" {
   description = "Minimum number of replicas to allow scaling for"
   type        = number
-  default     = 2
+  default     = 0
 }
 
 variable "replica_scale_cpu" {
@@ -320,9 +320,9 @@ variable "copy_tags_to_snapshot" {
 }
 
 variable "iam_roles" {
-  description = "A List of ARNs for the IAM roles to associate to the RDS Cluster."
-  type        = list(string)
-  default     = []
+  description = "A Map of ARNs for the IAM roles to associate to the RDS Cluster."
+  type        = map(map(string))
+  default     = {}
 }
 
 variable "security_group_description" {
@@ -334,7 +334,7 @@ variable "security_group_description" {
 variable "ca_cert_identifier" {
   description = "The identifier of the CA certificate for the DB instance."
   type        = string
-  default     = "rds-ca-2019"
+  default     = "rds-ca-rsa4096-g1"
 }
 
 variable "instances_parameters" {
@@ -419,5 +419,47 @@ variable "restore_to_point_in_time" {
 variable "s3_import" {
   description = "Restore from a Percona XtraBackup stored in S3 bucket. Only Aurora MySQL is supported."
   type        = map(string)
+  default     = null
+}
+
+variable "serverlessv2_scaling_configuration" {
+  description = "Nested attribute with scaling properties for ServerlessV2. Only valid when `engine_mode` is set to `provisioned`"
+  type        = map(string)
+  default     = {}
+}
+
+variable "allocated_storage" {
+  description = "The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster"
+  type        = number
+  default     = null
+}
+
+variable "availability_zones" {
+  description = "List of EC2 Availability Zones for the DB cluster storage where DB cluster instances can be created. RDS automatically assigns 3 AZs if less than 3 AZs are configured, which will show as a difference requiring resource recreation next Terraform apply."
+  type        = list(string)
+  default     = null
+}
+
+variable "iops" {
+  description = "Amount of Provisioned IOPS (input/output operations per second) to be initially allocated for each DB instance in the Multi-AZ DB cluster."
+  type        = number
+  default     = null
+}
+
+variable "manage_master_user_password" {
+  description = "Set to true to allow RDS to manage the master user password in Secrets Manager. Cannot be set if master_password is provided."
+  type        = bool
+  default     = true
+}
+
+variable "master_user_secret_kms_key_id" {
+  description = "Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the KMS key. To use a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN. If not specified, the default KMS key for your Amazon Web Services account is used."
+  type        = string
+  default     = null
+}
+
+variable "network_type" {
+  description = "Network type of the cluster. Valid values: IPV4, DUAL."
+  type        = string
   default     = null
 }
