@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-1"
-}
-
 #####
 # VPC and subnets
 #####
@@ -9,38 +5,43 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnet_ids" "all" {
-  vpc_id = data.aws_vpc.default.id
+data "aws_subnets" "all" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
 }
 
 #############
 # RDS Aurora
 #############
-module "aurora-serverless" {
+module "aurora-serverless-v2" {
   source = "../../"
 
-  name_prefix = "example-aurora-serverless"
+  name_prefix = "example-aurora-serverless-v2"
 
-  engine      = "aurora"
-  engine_mode = "serverless"
+  engine         = "aurora-mysql"
+  engine_mode    = "provisioned"
+  engine_version = "8.0.mysql_aurora.3.05.1"
 
-  replica_count = 0
+  replica_scale_enabled = true
+  replica_scale_min     = 1
+  replica_scale_max     = 2
+
+  manage_master_user_password = false
 
   vpc_id  = data.aws_vpc.default.id
-  subnets = data.aws_subnet_ids.all.ids
+  subnets = data.aws_subnets.all.ids
 
-  instance_type       = "db.t4g.medium"
+  instance_type       = "db.serverless"
   apply_immediately   = true
   skip_final_snapshot = true
   storage_encrypted   = true
 
-  iam_database_authentication_enabled = false # can't be set to true yet
+  iam_database_authentication_enabled = true
 
-  scaling_configuration = {
-    auto_pause               = true
-    max_capacity             = 256
-    min_capacity             = 2
-    seconds_until_auto_pause = 300
-    timeout_action           = "ForceApplyCapacityChange"
+  serverlessv2_scaling_configuration = {
+    max_capacity = 1
+    min_capacity = 0.5
   }
 }
