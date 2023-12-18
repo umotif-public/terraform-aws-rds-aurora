@@ -91,6 +91,14 @@ resource "aws_db_subnet_group" "main" {
   )
 }
 
+resource "aws_rds_cluster_role_association" "main" {
+  for_each = { for k, v in var.iam_roles : k => v }
+
+  db_cluster_identifier = aws_rds_cluster.main[0].id
+  feature_name          = each.value.feature_name
+  role_arn              = each.value.role_arn
+}
+
 #####
 # Standard RDS cluster
 #####
@@ -107,11 +115,13 @@ resource "aws_rds_cluster" "main" {
   engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
-  kms_key_id = var.kms_key_id
-
-  database_name   = var.database_name
-  master_username = var.username
-  master_password = var.password == "" ? random_password.master_password.result : var.password
+  kms_key_id                    = var.kms_key_id
+  iops                          = var.iops
+  database_name                 = var.database_name
+  manage_master_user_password   = var.global_cluster_identifier == null && var.manage_master_user_password ? var.manage_master_user_password : null
+  master_user_secret_kms_key_id = var.global_cluster_identifier == null && var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
+  master_username               = var.master_username
+  master_password               = !var.manage_master_user_password || var.master_password == "" ? random_password.master_password.result : var.master_password
 
   final_snapshot_identifier = "${var.final_snapshot_identifier_prefix}-${var.name_prefix}-${random_id.snapshot_identifier.hex}"
   skip_final_snapshot       = var.skip_final_snapshot
@@ -130,12 +140,15 @@ resource "aws_rds_cluster" "main" {
   db_subnet_group_name   = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
   vpc_security_group_ids = compact(concat([aws_security_group.main[0].id], var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
+  allocated_storage      = var.allocated_storage
+  availability_zones     = var.availability_zones
+  network_type           = var.network_type
 
   db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   backtrack_window = (var.engine == "aurora-mysql" || var.engine == "aurora") && var.engine_mode != "serverless" ? var.backtrack_window : 0
-  iam_roles        = var.iam_roles
+  # iam_roles deprecated in favour of RDS Cluster Role Association
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
 
@@ -162,7 +175,7 @@ resource "aws_rds_cluster" "main" {
   }
 
   dynamic "scaling_configuration" {
-    for_each = length(keys(var.scaling_configuration)) == 0 ? [] : [var.scaling_configuration]
+    for_each = length(keys(var.scaling_configuration)) > 0 && var.engine_mode == "serverless" ? [var.scaling_configuration] : []
 
     content {
       auto_pause               = lookup(scaling_configuration.value, "auto_pause", null)
@@ -170,6 +183,15 @@ resource "aws_rds_cluster" "main" {
       min_capacity             = lookup(scaling_configuration.value, "min_capacity", null)
       seconds_until_auto_pause = lookup(scaling_configuration.value, "seconds_until_auto_pause", null)
       timeout_action           = lookup(scaling_configuration.value, "timeout_action", null)
+    }
+  }
+
+  dynamic "serverlessv2_scaling_configuration" {
+    for_each = length(var.serverlessv2_scaling_configuration) > 0 && var.engine_mode == "provisioned" ? [var.serverlessv2_scaling_configuration] : []
+
+    content {
+      max_capacity = serverlessv2_scaling_configuration.value.max_capacity
+      min_capacity = serverlessv2_scaling_configuration.value.min_capacity
     }
   }
 
@@ -201,11 +223,13 @@ resource "aws_rds_cluster" "global" {
   engine_version       = var.engine_mode == "serverless" ? null : var.engine_version
   enable_http_endpoint = var.enable_http_endpoint
 
-  kms_key_id = var.kms_key_id
-
-  database_name   = var.database_name
-  master_username = var.username
-  master_password = var.password == "" ? random_password.master_password.result : var.password
+  kms_key_id                    = var.kms_key_id
+  iops                          = var.iops
+  manage_master_user_password   = var.global_cluster_identifier == null && var.manage_master_user_password ? var.manage_master_user_password : null
+  master_user_secret_kms_key_id = var.global_cluster_identifier == null && var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
+  database_name                 = var.database_name
+  master_username               = var.master_username
+  master_password               = !var.manage_master_user_password || var.master_password == "" ? random_password.master_password.result : var.master_password
 
   final_snapshot_identifier = "${var.final_snapshot_identifier_prefix}-${var.name_prefix}-${random_id.snapshot_identifier.hex}"
   skip_final_snapshot       = var.skip_final_snapshot
@@ -224,12 +248,15 @@ resource "aws_rds_cluster" "global" {
   db_subnet_group_name   = var.db_subnet_group_name == "" ? aws_db_subnet_group.main[0].name : var.db_subnet_group_name
   vpc_security_group_ids = compact(concat(aws_security_group.main[0].id, var.vpc_security_group_ids))
   storage_encrypted      = var.storage_encrypted
+  network_type           = var.network_type
+  allocated_storage      = var.allocated_storage
+  availability_zones     = var.availability_zones
 
   db_cluster_parameter_group_name     = var.create_parameter_group ? aws_rds_cluster_parameter_group.main[0].id : var.db_cluster_parameter_group_name
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   backtrack_window = (var.engine == "aurora-mysql" || var.engine == "aurora") && var.engine_mode != "serverless" ? var.backtrack_window : 0
-  iam_roles        = var.iam_roles
+  # iam_roles deprecated in favour of RDS Cluster Role Association
 
   enabled_cloudwatch_logs_exports = [for log in var.enabled_cloudwatch_logs_exports : log.name]
 
@@ -404,7 +431,7 @@ resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
 resource "aws_cloudwatch_log_group" "audit_log_group" {
   for_each = { for export in var.enabled_cloudwatch_logs_exports : export.name => export }
 
-  name = "/aws/rds/cluster/${var.name_prefix}/${lookup(each.value, "name")}"
+  name = "/aws/rds/cluster/${var.name_prefix}/${each.value["name"]}"
 
   retention_in_days = lookup(each.value, "retention_in_days", null)
   kms_key_id        = lookup(each.value, "kms_key_id", null)
