@@ -253,6 +253,12 @@ variable "performance_insights_kms_key_id" {
   default     = null
 }
 
+variable "performance_insights_retention_period" {
+  description = "Amount of time in days to retain Performance Insights data. Valid values are 7, 731 (2 years) or a multiple of 31. When specifying performance_insights_retention_period, performance_insights_enabled needs to be set to true."
+  type        = number
+  default     = 7
+}
+
 variable "iam_database_authentication_enabled" {
   description = "Specifies whether IAM Database authentication should be enabled or not. Not all versions and instances are supported. Refer to the AWS documentation to see which versions are supported."
   type        = bool
