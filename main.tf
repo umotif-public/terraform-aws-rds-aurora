@@ -325,12 +325,13 @@ resource "aws_rds_cluster_instance" "main" {
   preferred_maintenance_window = var.preferred_instance_maintenance_window
   apply_immediately            = var.apply_immediately
 
-  monitoring_role_arn             = var.create_monitoring_role && var.monitoring_interval > 0 ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
-  monitoring_interval             = var.monitoring_interval
-  auto_minor_version_upgrade      = var.auto_minor_version_upgrade
-  performance_insights_enabled    = var.performance_insights_enabled
-  performance_insights_kms_key_id = var.performance_insights_kms_key_id
-  ca_cert_identifier              = var.ca_cert_identifier
+  monitoring_role_arn                   = var.create_monitoring_role && var.monitoring_interval > 0 ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
+  monitoring_interval                   = var.monitoring_interval
+  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  performance_insights_enabled          = var.performance_insights_enabled
+  performance_insights_kms_key_id       = var.performance_insights_kms_key_id
+  performance_insights_retention_period = try(var.performance_insights_retention_period, 7)
+  ca_cert_identifier                    = var.ca_cert_identifier
 
   tags = merge(
     var.tags,
