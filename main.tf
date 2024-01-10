@@ -330,7 +330,7 @@ resource "aws_rds_cluster_instance" "main" {
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
   performance_insights_enabled          = var.performance_insights_enabled
   performance_insights_kms_key_id       = var.performance_insights_kms_key_id
-  performance_insights_retention_period = try(var.performance_insights_retention_period, 7)
+  performance_insights_retention_period = var.performance_insights_retention_period
   ca_cert_identifier                    = var.ca_cert_identifier
 
   tags = merge(
