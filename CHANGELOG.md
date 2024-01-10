@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
-- Add performance insights retention period
+- fix: retention period for performance insights needs to be null
+- Add 'performance_insights_retention_period' ([#20](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/20))
 
 
 <a name="3.4.0"></a>
