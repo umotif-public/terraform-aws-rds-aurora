@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
-- fix: retention period for performance insights needs to be null
+
+
+<a name="3.4.1"></a>
+## [3.4.1] - 2024-01-10
+
+- Fix performance insights retention period ([#21](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/21))
 - Add 'performance_insights_retention_period' ([#20](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/20))
 
 
@@ -128,7 +133,8 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.0...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.1...HEAD
+[3.4.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.0...3.4.1
 [3.4.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.1...3.4.0
 [3.3.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.0...3.3.1
 [3.3.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.2.1...3.3.0

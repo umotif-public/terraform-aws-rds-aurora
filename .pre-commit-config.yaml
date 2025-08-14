@@ -1,13 +1,13 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v6.0.0
   hooks:
   - id: check-added-large-files
     args: ['--maxkb=500']
   - id: check-executables-have-shebangs
   - id: pretty-format-json
     args: ['--autofix', '--no-sort-keys', '--indent=2']
-  - id: check-byte-order-marker
+  - id: fix-byte-order-marker
   - id: check-case-conflict
   - id: check-executables-have-shebangs
   - id: check-merge-conflict
@@ -18,7 +18,7 @@ repos:
     args: ['--allow-missing-credentials']
   - id: trailing-whitespace
 - repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.86.0
+  rev: v1.100.0
   hooks:
   - id: terraform_fmt
   - id: terraform_docs
