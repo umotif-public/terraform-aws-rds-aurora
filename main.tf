@@ -328,9 +328,9 @@ resource "aws_rds_cluster_instance" "main" {
   monitoring_role_arn                   = var.create_monitoring_role && var.monitoring_interval > 0 ? aws_iam_role.rds_enhanced_monitoring[0].arn : var.monitoring_role_arn
   monitoring_interval                   = var.monitoring_interval
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
-  performance_insights_enabled          = var.performance_insights_enabled
-  performance_insights_kms_key_id       = var.performance_insights_kms_key_id
-  performance_insights_retention_period = var.performance_insights_retention_period
+  performance_insights_enabled          = var.performance_insights_enabled == true ? true : null
+  performance_insights_kms_key_id       = var.performance_insights_enabled == true ? var.performance_insights_kms_key_id : null
+  performance_insights_retention_period = var.performance_insights_enabled == true ? var.performance_insights_retention_period : null
   ca_cert_identifier                    = var.ca_cert_identifier
 
   tags = merge(
@@ -340,7 +340,10 @@ resource "aws_rds_cluster_instance" "main" {
 
   lifecycle {
     ignore_changes = [
-      engine_version
+      engine_version,
+      performance_insights_enabled,
+      performance_insights_kms_key_id,
+      performance_insights_retention_period,
     ]
   }
 }

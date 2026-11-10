@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
+- DEVOPS-4425 Ran make validate
+- DEVOPS-4425 Fixed conditions for the performance insights
+- DEVOPS-4425 Added performance insights to lifecycle rule to ignore already enabled ones
+
+
+<a name="3.5.0"></a>
+## [3.5.0] - 2025-08-14
+
+- DEVOPS-3346 AWS Provider 6.0 compatibility ([#22](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/22))
 
 
 <a name="3.4.1"></a>
@@ -133,7 +142,8 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.1...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.5.0...HEAD
+[3.5.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.1...3.5.0
 [3.4.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.0...3.4.1
 [3.4.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.1...3.4.0
 [3.3.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.0...3.3.1
