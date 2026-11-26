@@ -117,6 +117,7 @@ resource "aws_rds_cluster" "main" {
 
   kms_key_id                    = var.kms_key_id
   iops                          = var.iops
+  storage_type                  = var.storage_type
   database_name                 = var.database_name
   manage_master_user_password   = var.global_cluster_identifier == null && var.manage_master_user_password ? var.manage_master_user_password : null
   master_user_secret_kms_key_id = var.global_cluster_identifier == null && var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
@@ -225,6 +226,7 @@ resource "aws_rds_cluster" "global" {
 
   kms_key_id                    = var.kms_key_id
   iops                          = var.iops
+  storage_type                  = var.storage_type
   manage_master_user_password   = var.global_cluster_identifier == null && var.manage_master_user_password ? var.manage_master_user_password : null
   master_user_secret_kms_key_id = var.global_cluster_identifier == null && var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
   database_name                 = var.database_name

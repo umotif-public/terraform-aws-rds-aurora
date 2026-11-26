@@ -452,6 +452,17 @@ variable "iops" {
   default     = null
 }
 
+variable "storage_type" {
+  description = "Aurora cluster storage type. Null leaves the setting unmanaged. Valid values: aurora (Standard), aurora-iopt1 (I/O-Optimized)."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.storage_type == null || contains(["aurora", "aurora-iopt1"], var.storage_type)
+    error_message = "storage_type must be null, \"aurora\", or \"aurora-iopt1\"."
+  }
+}
+
 variable "manage_master_user_password" {
   description = "Set to true to allow RDS to manage the master user password in Secrets Manager. Cannot be set if master_password is provided."
   type        = bool
