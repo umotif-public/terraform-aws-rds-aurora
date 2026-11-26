@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 <a name="unreleased"></a>
 ## [Unreleased]
 
-- DEVOPS-4425 Ran make validate
-- DEVOPS-4425 Fixed conditions for the performance insights
-- DEVOPS-4425 Added performance insights to lifecycle rule to ignore already enabled ones
+- DEVOPS-4440-add-RDS-I-O-storage-options
+
+
+<a name="3.5.1"></a>
+## [3.5.1] - 2026-11-10
+
+- DEVOPS-4425 Added conditions and ignore rule for performance insights ([#23](https://github.com/umotif-public/terraform-aws-rds-aurora/issues/23))
 
 
 <a name="3.5.0"></a>
@@ -142,7 +146,8 @@ All notable changes to this project will be documented in this file.
 - Initial commit
 
 
-[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.5.0...HEAD
+[Unreleased]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.5.1...HEAD
+[3.5.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.5.0...3.5.1
 [3.5.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.1...3.5.0
 [3.4.1]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.4.0...3.4.1
 [3.4.0]: https://github.com/umotif-public/terraform-aws-rds-aurora/compare/3.3.1...3.4.0
